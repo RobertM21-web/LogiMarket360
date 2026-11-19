@@ -1,0 +1,4 @@
+  Failed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Domain_no_referencia_ningun_proyecto_ni_paquete [412 ms]
+   Expected Paquetes("LogiMarket.Domain") to be empty, but found at least one item {"Microsoft.Data.Sqlite"}.
+Failed!  - Failed:     1, Passed:     6, Skipped:     0, Total:     7, Duration: 430 ms - LogiMarket.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 10 ms - LogiMarket.Tests.dll (net8.0)
