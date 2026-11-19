@@ -1,0 +1,16 @@
+# Build
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+# Datos locales de ejecucion
+*.db
+*.db-shm
+*.db-wal
+# Entregables generados
+*.zip
+# Material de referencia local (fuera del repositorio)
+Documento.pdf
+MASTER_PROMPT_LogiMarket360.md
