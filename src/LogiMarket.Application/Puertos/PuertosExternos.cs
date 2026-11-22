@@ -39,6 +39,17 @@ public interface ISeleccionProveedorPago
     void Seleccionar(string proveedor);
 }
 
+/// <summary>
+/// Interruptores del modo demostración. Activan dobles de prueba reales (rechazo de proveedor, caída del
+/// servicio de avisos) sin cambiar reglas de negocio ni falsear resultados.
+/// </summary>
+public interface IModoDemostracion
+{
+    bool RechazarCobros { get; set; }
+
+    bool FallarNotificaciones { get; set; }
+}
+
 /// <summary>Contenido de un aviso a cliente.</summary>
 public sealed record MensajeAviso(string Destinatario, string Asunto, string Cuerpo, string Referencia);
 
