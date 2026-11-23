@@ -1,4 +1,5 @@
 using LogiMarket.Application.Eventos;
+using LogiMarket.Application.Metricas;
 using LogiMarket.Application.Puertos;
 using LogiMarket.Application.Seguridad;
 
@@ -17,9 +18,13 @@ public sealed class ServicioDemostracion
     private readonly ISeleccionProveedorPago _proveedor;
     private readonly ProcesadorOutbox _outbox;
     private readonly IRegistroAuditoria _auditoria;
+    private readonly IRestablecimientoDatos _restablecimiento;
+    private readonly MetricasSesion _metricas;
 
-    public ServicioDemostracion(IAutorizador autorizador, IModoDemostracion modo, ISeleccionProveedorPago proveedor, ProcesadorOutbox outbox, IRegistroAuditoria auditoria)
+    public ServicioDemostracion(IAutorizador autorizador, IModoDemostracion modo, ISeleccionProveedorPago proveedor, ProcesadorOutbox outbox, IRegistroAuditoria auditoria, IRestablecimientoDatos restablecimiento, MetricasSesion metricas)
     {
+        _restablecimiento = restablecimiento;
+        _metricas = metricas;
         _autorizador = autorizador;
         _modo = modo;
         _proveedor = proveedor;
@@ -34,6 +39,19 @@ public sealed class ServicioDemostracion
     {
         await _autorizador.VerificarAsync(Operacion.CobrarPedido, $"Seleccionar proveedor {proveedor}", ct);
         _proveedor.Seleccionar(proveedor);
+    }
+
+    /// <summary>Restablece los datos de prueba (solo ADMIN): BD nueva con semilla, interruptores apagados y métricas a cero.</summary>
+    public async Task<string> RestablecerDatosAsync(CancellationToken ct = default)
+    {
+        await _autorizador.VerificarAsync(Operacion.ModoDemostracion, "Restablecer datos de prueba", ct);
+        var usuario = _autorizador.UsuarioActual.NombreUsuario;
+        var insertados = await _restablecimiento.RestablecerAsync(ct);
+        _modo.RechazarCobros = false;
+        _modo.FallarNotificaciones = false;
+        _metricas.Reiniciar();
+        await _auditoria.RegistrarAsync("SISTEMA", "DATOS RESTABLECIDOS", $"Base recreada con {insertados} registros de semilla", usuario, ct: ct);
+        return $"Datos de prueba restablecidos ({insertados} registros de semilla).";
     }
 
     public async Task<string> AplicarAsync(EscenarioDemostracion escenario, CancellationToken ct = default)

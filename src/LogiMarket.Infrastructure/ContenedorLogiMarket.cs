@@ -77,6 +77,7 @@ public static class ContenedorLogiMarket
         services.AddSingleton<IAuditoriaSeguridad>(sp => sp.GetRequiredService<AuditoriaIndependiente>());
         services.AddScoped<SemillaDatos>();
         services.AddScoped<InicializadorBaseDatos>();
+        services.AddScoped<IRestablecimientoDatos>(sp => sp.GetRequiredService<InicializadorBaseDatos>());
 
         // Pagos: Proxy → Decorator → Enrutador → Adapter/V2
         services.AddSingleton<PasarelaLegadaSimulada>();

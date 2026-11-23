@@ -1,3 +1,4 @@
+using LogiMarket.Application.Puertos;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -26,7 +27,7 @@ public sealed class OpcionesLogiMarket
 }
 
 /// <summary>Aplica migraciones sobre una BD nueva o existente y ejecuta la semilla idempotente.</summary>
-public sealed class InicializadorBaseDatos
+public sealed class InicializadorBaseDatos : IRestablecimientoDatos
 {
     private readonly LogiMarketDbContext _db;
     private readonly SemillaDatos _semilla;
