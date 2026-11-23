@@ -50,6 +50,12 @@ public interface IModoDemostracion
     bool FallarNotificaciones { get; set; }
 }
 
+/// <summary>Restablece la base local a los datos de prueba (elimina y recrea con la semilla).</summary>
+public interface IRestablecimientoDatos
+{
+    Task<int> RestablecerAsync(CancellationToken ct = default);
+}
+
 /// <summary>Contenido de un aviso a cliente.</summary>
 public sealed record MensajeAviso(string Destinatario, string Asunto, string Cuerpo, string Referencia);
 

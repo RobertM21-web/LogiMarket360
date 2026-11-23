@@ -3,6 +3,7 @@ using LogiMarket.Application.Puertos;
 using LogiMarket.Application.Registros;
 using LogiMarket.Application.Seguridad;
 using LogiMarket.Domain.Catalogo;
+using LogiMarket.Domain.Clientes;
 using LogiMarket.Domain.Comun;
 using LogiMarket.Domain.Entrega;
 using LogiMarket.Domain.Pedidos;
@@ -69,6 +70,13 @@ public sealed class ServicioPedidos
         ArbolCatalogo.Construir(
             (await _productos.ListarAsync(ct)).Where(p => p.Activo),
             (await _kits.ListarAsync(ct)).Where(k => k.Activo));
+
+    /// <summary>Clientes activos (entidades de dominio) para seleccionar en el borrador.</summary>
+    public async Task<IReadOnlyList<Cliente>> ClientesActivosAsync(CancellationToken ct = default)
+    {
+        await _autorizador.VerificarAsync(Operacion.Consultar, "Clientes para borrador", ct);
+        return (await _clientes.ListarAsync(ct)).Where(c => c.Activo).OrderBy(c => c.Nombre).ToList();
+    }
 
     /// <summary>Valoración en vivo del borrador (subtotal, descuento, entrega, total) sin persistir.</summary>
     public ResumenPedido? Valorar(PedidoBorrador borrador) => borrador.Valorar(_calculadora, _familias);

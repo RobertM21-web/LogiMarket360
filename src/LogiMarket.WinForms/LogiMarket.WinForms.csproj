@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\LogiMarket.Application\LogiMarket.Application.csproj" />
@@ -10,6 +10,13 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>LogiMarket360</AssemblyName>
+    <RootNamespace>LogiMarket.WinForms</RootNamespace>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="LogiMarket.Tests" />
+  </ItemGroup>
 
 </Project>
