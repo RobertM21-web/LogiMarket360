@@ -68,9 +68,9 @@ public class ReglasDeDependenciaTests
     }
 
     [Theory]
-    [InlineData(typeof(Domain.AssemblyMarker), new[] { "LogiMarket.Application", "LogiMarket.Infrastructure", "LogiMarket.WinForms", "Microsoft.EntityFrameworkCore", "Microsoft.Data.Sqlite", "System.Windows.Forms" })]
-    [InlineData(typeof(Application.AssemblyMarker), new[] { "LogiMarket.Infrastructure", "LogiMarket.WinForms", "Microsoft.EntityFrameworkCore", "Microsoft.Data.Sqlite", "System.Windows.Forms" })]
-    [InlineData(typeof(Infrastructure.AssemblyMarker), new[] { "LogiMarket.WinForms", "System.Windows.Forms" })]
+    [InlineData(typeof(Domain.AssemblyMarker), new[] { "LogiMarket.Application", "LogiMarket.Infrastructure", "LogiMarket.WinForms", "LogiMarket360", "Microsoft.EntityFrameworkCore", "Microsoft.Data.Sqlite", "System.Windows.Forms" })]
+    [InlineData(typeof(Application.AssemblyMarker), new[] { "LogiMarket.Infrastructure", "LogiMarket.WinForms", "LogiMarket360", "Microsoft.EntityFrameworkCore", "Microsoft.Data.Sqlite", "System.Windows.Forms" })]
+    [InlineData(typeof(Infrastructure.AssemblyMarker), new[] { "LogiMarket.WinForms", "LogiMarket360", "System.Windows.Forms" })]
     public void Ensamblados_compilados_no_cargan_dependencias_prohibidas(Type marcador, string[] prohibidas)
     {
         var referencias = marcador.Assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
