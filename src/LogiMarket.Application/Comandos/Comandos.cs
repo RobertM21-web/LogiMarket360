@@ -16,6 +16,14 @@ public interface IComandoNegocio
     string Entrada { get; }
 
     Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct);
+
+    /// <summary>
+    /// Reacción del comando cuando Application deniega el acceso (por defecto ninguna). Cada comando
+    /// decide qué métrica afecta; el invocador no necesita conocer tipos concretos (OCP).
+    /// </summary>
+    void AlDenegarseAcceso(MetricasSesion metricas)
+    {
+    }
 }
 
 public sealed class ConfirmarPedidoCommand : IComandoNegocio
@@ -48,6 +56,9 @@ public sealed class ConfirmarPedidoCommand : IComandoNegocio
 
         return new ResultadoOperacion(Detalle.Exito, Detalle.Codigo, Detalle.Mensaje, _pedidoId);
     }
+
+    /// <summary>La Facade rechaza antes de llegar al Proxy: el intento de cobro denegado se contabiliza aquí.</summary>
+    public void AlDenegarseAcceso(MetricasSesion metricas) => metricas.RegistrarCobroDenegado();
 }
 
 public sealed class CancelarPedidoCommand : IComandoNegocio
@@ -200,11 +211,7 @@ public sealed class InvocadorComandos
         catch (AccesoDenegadoException ex)
         {
             resultado = ResultadoOperacion.Error(AccesoDenegadoException.Codigo, ex.Message);
-            if (comando is ConfirmarPedidoCommand)
-            {
-                // La Facade rechaza antes de llegar al Proxy: el intento de cobro denegado se contabiliza aquí.
-                _metricas.RegistrarCobroDenegado();
-            }
+            comando.AlDenegarseAcceso(_metricas);
         }
 
         var usuario = _sesion.Usuario?.NombreUsuario ?? "anónimo";

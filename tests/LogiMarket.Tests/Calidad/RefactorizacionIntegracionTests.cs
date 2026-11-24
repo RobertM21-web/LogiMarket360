@@ -1,8 +1,11 @@
 using FluentAssertions;
+using LogiMarket.Application.Comandos;
 using LogiMarket.Application.Consultas;
 using LogiMarket.Application.Demostracion;
 using LogiMarket.Application.Devoluciones;
+using LogiMarket.Application.Metricas;
 using LogiMarket.Application.Pedidos;
+using LogiMarket.Application.Seguridad;
 using LogiMarket.Domain.Comun;
 using LogiMarket.Domain.Entrega;
 using LogiMarket.Domain.Pedidos;
@@ -55,5 +58,37 @@ public class RefactorizacionIntegracionTests
 
         (await e.ConsultarBdAsync(db => db.Pagos.Select(p => p.Referencia).SingleAsync())).Should().StartWith("V2-20260110-");
         (await e.ConsultarBdAsync(db => db.Devoluciones.Select(d => d.ReferenciaReembolso).SingleAsync())).Should().StartWith("RMB-20260110150000-");
+    }
+
+    private sealed class ComandoDenegado(bool esCobro) : IComandoNegocio
+    {
+        public string Nombre => esCobro ? "CobroDePrueba" : "ConsultaDePrueba";
+
+        public string Entrada => "-";
+
+        public Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct) =>
+            throw new AccesoDenegadoException(esCobro ? Operacion.CobrarPedido : Operacion.AjustarInventario, "consulta.demo", Rol.Consulta);
+
+        public void AlDenegarseAcceso(MetricasSesion metricas)
+        {
+            if (esCobro)
+            {
+                metricas.RegistrarCobroDenegado();
+            }
+        }
+    }
+
+    [Fact]
+    public async Task R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos()
+    {
+        var metricas = new MetricasSesion();
+        var invocador = new InvocadorComandos(Sesiones.Con(Rol.Consulta, "consulta.demo"), new AuditoriaEnMemoria(), metricas, _reloj);
+
+        var cobro = await invocador.EjecutarAsync(new ComandoDenegado(esCobro: true));
+        var otro = await invocador.EjecutarAsync(new ComandoDenegado(esCobro: false));
+
+        cobro.Codigo.Should().Be(AccesoDenegadoException.Codigo);
+        otro.Codigo.Should().Be(AccesoDenegadoException.Codigo);
+        metricas.Instantanea.CobrosDenegados.Should().Be(1, "solo el comando de cobro cuenta como cobro denegado");
     }
 }
