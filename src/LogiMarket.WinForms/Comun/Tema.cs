@@ -1,5 +1,6 @@
 using System.Globalization;
 using LogiMarket.Domain.Pedidos.Estados;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.WinForms.Comun;
 
@@ -27,7 +28,7 @@ public static class Tema
     public static readonly Font Kpi = new("Segoe UI Semibold", 20f);
     public static readonly Font Monoespaciada = new("Consolas", 9.75f);
 
-    public static string Usd(decimal valor) => "USD " + valor.ToString("0.00", Cultura);
+    public static string Usd(decimal valor) => Dinero.Formatear(valor);
 
     public static string Fecha(DateTime? utc) => utc is null ? "—" : utc.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm", Cultura);
 

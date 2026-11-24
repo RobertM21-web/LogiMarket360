@@ -33,9 +33,9 @@ public sealed class NotificacionClienteObserver : IObservadorEventos
     {
         var (clienteId, asunto, cuerpo, referencia) = evento switch
         {
-            PedidoPagado e => (e.ClienteId, $"Pedido {e.CodigoPedido} confirmado", $"Recibimos su pago de USD {e.Total:0.00} (ref. {e.ReferenciaCobro}).", e.CodigoPedido),
+            PedidoPagado e => (e.ClienteId, $"Pedido {e.CodigoPedido} confirmado", $"Recibimos su pago de {Dinero.Formatear(e.Total)} (ref. {e.ReferenciaCobro}).", e.CodigoPedido),
             DespachoRegistrado e => (e.ClienteId, $"Pedido {e.CodigoPedido} despachado", $"Guía {e.NumeroGuia}. Entrega estimada {e.FechaEstimadaUtc.ToLocalTime():dd/MM/yyyy}.", e.CodigoPedido),
-            DevolucionAceptada e => (e.ClienteId, $"Devolución {e.CodigoDevolucion} aceptada", $"Reembolso de USD {e.MontoReembolso:0.00} por el pedido {e.CodigoPedido}.", e.CodigoDevolucion),
+            DevolucionAceptada e => (e.ClienteId, $"Devolución {e.CodigoDevolucion} aceptada", $"Reembolso de {Dinero.Formatear(e.MontoReembolso)} por el pedido {e.CodigoPedido}.", e.CodigoDevolucion),
             _ => throw new InvalidOperationException($"Evento no soportado: {evento.Tipo}"),
         };
 

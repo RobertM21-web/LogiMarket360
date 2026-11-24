@@ -39,6 +39,12 @@ public readonly record struct Dinero : IComparable<Dinero>
     public int CompareTo(Dinero other) => Valor.CompareTo(other.Valor);
 
     /// <summary>Formato de presentación: "USD 59.00".</summary>
-    public override string ToString() =>
-        "USD " + Math.Round(Valor, 2, MidpointRounding.AwayFromZero).ToString("0.00", CultureInfo.InvariantCulture);
+    public override string ToString() => Formatear(Valor);
+
+    /// <summary>
+    /// Único formato monetario del sistema: "USD 59.00", redondeo comercial y cultura invariante
+    /// (independiente de la configuración regional de Windows, p. ej. es-EC usa coma decimal).
+    /// </summary>
+    public static string Formatear(decimal valor) =>
+        "USD " + Math.Round(valor, 2, MidpointRounding.AwayFromZero).ToString("0.00", CultureInfo.InvariantCulture);
 }

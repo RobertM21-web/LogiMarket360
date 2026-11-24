@@ -1,5 +1,7 @@
+using System.Globalization;
 using LogiMarket.Application.Puertos;
 using LogiMarket.Infrastructure.Pagos.Legado;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Infrastructure.Pagos;
 
@@ -115,7 +117,7 @@ public sealed class PasarelaV2Simulada : IProveedorPago
             }
         }
 
-        await _bitacora.RegistrarAsync("PAGO", "PASARELA V2", $"CobrarAsync({monto:0.00}) → {(resultado.Aprobado ? resultado.Referencia : resultado.Mensaje)}", "sistema", resultado.Aprobado ? "APROBADO" : "RECHAZADO", ContextoCorrelacion.Id, ct);
+        await _bitacora.RegistrarAsync("PAGO", "PASARELA V2", $"CobrarAsync({monto.ToString("0.00", CultureInfo.InvariantCulture)}) → {(resultado.Aprobado ? resultado.Referencia : resultado.Mensaje)}", "sistema", resultado.Aprobado ? "APROBADO" : "RECHAZADO", ContextoCorrelacion.Id, ct);
         return resultado;
     }
 
@@ -222,7 +224,7 @@ public sealed class ServicioReembolsoSimulado : IServicioReembolso
             }
         }
 
-        await _bitacora.RegistrarAsync("PAGO", "REEMBOLSO SIMULADO", $"USD {monto:0.00} → {resultado.Referencia}", "sistema", "APROBADO", claveReembolso, ct);
+        await _bitacora.RegistrarAsync("PAGO", "REEMBOLSO SIMULADO", $"{Dinero.Formatear(monto)} → {resultado.Referencia}", "sistema", "APROBADO", claveReembolso, ct);
         return resultado;
     }
 }

@@ -1,6 +1,7 @@
 using LogiMarket.Application.Metricas;
 using LogiMarket.Application.Puertos;
 using LogiMarket.Application.Seguridad;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Application.Pagos;
 
@@ -25,7 +26,7 @@ public sealed class PagoAutorizadoProxy : IPasarelaPago
     {
         try
         {
-            await _autorizador.VerificarAsync(Operacion.CobrarPedido, $"Cobro USD {monto:0.00} clave {claveIdempotencia}", ct);
+            await _autorizador.VerificarAsync(Operacion.CobrarPedido, $"Cobro {Dinero.Formatear(monto)} clave {claveIdempotencia}", ct);
         }
         catch (AccesoDenegadoException)
         {
