@@ -60,7 +60,7 @@ public sealed class EjecutorOperaciones
         }
         else
         {
-            MessageBox.Show(dueno, $"{r.Mensaje}\n\nCódigo: {r.Codigo}", titulo, MessageBoxButtons.OK, r.Codigo == "ACCESO_DENEGADO" ? MessageBoxIcon.Stop : MessageBoxIcon.Warning);
+            MessageBox.Show(dueno, $"{r.Mensaje}\n\nCódigo: {r.Codigo}", titulo, MessageBoxButtons.OK, r.Codigo == AccesoDenegadoException.Codigo ? MessageBoxIcon.Stop : MessageBoxIcon.Warning);
         }
 
         return r.Exito;

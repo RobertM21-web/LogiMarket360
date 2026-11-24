@@ -1,0 +1,19 @@
+R06 — código de error de acceso como literal mágico en src/
+ANTES:
+src/LogiMarket.Application/Comandos/Comandos.cs:202:            resultado = ResultadoOperacion.Error("ACCESO_DENEGADO", ex.Message);
+src/LogiMarket.Application/Pedidos/Validacion/CadenaValidacionPedido.cs:158:            return Task.FromResult<RechazoValidacion?>(Rechazar("ACCESO_DENEGADO", $"Su rol no permite {(s.ParaConfirmar ? "confirmar y cobrar" : "validar")} pedidos."));
+src/LogiMarket.WinForms/Comun/EjecutorOperaciones.cs:63:            MessageBox.Show(dueno, $"{r.Mensaje}\n\nCódigo: {r.Codigo}", titulo, MessageBoxButtons.OK, r.Codigo == "ACCESO_DENEGADO" ? MessageBoxIcon.Stop : MessageBoxIcon.Warning);
+
+DESPUÉS:
+src/LogiMarket.Application/Seguridad/Autorizacion.cs:50:    public const string Codigo = "ACCESO_DENEGADO";
+
+Pruebas de contrato que fijan el código (verdes antes y después):
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Admin) [8 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Ventas) [< 1 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Bodega) [7 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Consulta) [< 1 ms]
+Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_sin_cliente_y_sin_stock_se_detiene_en_el_primer_eslabon_y_luego_en_stock [20 ms]
+Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_rol_sin_permiso_es_rechazado_en_el_ultimo_eslabon [< 1 ms]
+Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_pedido_valido_recorre_los_cuatro_eslabones [1 ms]
+Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_carrito_vacio_es_rechazado_en_lineas [< 1 ms]
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad [1 s]

@@ -155,7 +155,7 @@ public sealed class CondicionesConfirmacionValidador : EslabonValidacion
         var operacion = s.ParaConfirmar ? Operacion.CobrarPedido : Operacion.ValidarPedido;
         if (!_autorizador.Puede(operacion))
         {
-            return Task.FromResult<RechazoValidacion?>(Rechazar("ACCESO_DENEGADO", $"Su rol no permite {(s.ParaConfirmar ? "confirmar y cobrar" : "validar")} pedidos."));
+            return Task.FromResult<RechazoValidacion?>(Rechazar(AccesoDenegadoException.Codigo, $"Su rol no permite {(s.ParaConfirmar ? "confirmar y cobrar" : "validar")} pedidos."));
         }
 
         var estadoAdmite = s.Estado is null
