@@ -1,0 +1,13 @@
+﻿Comprobante de devolución DEV-001
+
+LOGIMARKET 360
+COMPROBANTE DE DEVOLUCIÓN — documento interno de demostración (no tributario, sin IVA)
+------------------------------------------------------------
+Devolución: DEV-001    Pedido: PED-001
+Cliente: Ana López    Motivo: DEFECTO    Días desde la entrega: 0
+Reintegro de stock: SÍ    Ref. reembolso: RMB-20261125044925-001
+------------------------------------------------------------
+Subtotal de productos                            USD 60.00
+Descuento aplicado VIP                           -USD 6.00
+Tarifa de envío (no reembolsable)                 USD 5.00
+TOTAL REEMBOLSADO                                USD 54.00
