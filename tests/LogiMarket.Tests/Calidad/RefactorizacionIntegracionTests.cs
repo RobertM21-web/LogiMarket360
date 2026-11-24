@@ -3,6 +3,9 @@ using LogiMarket.Application.Comandos;
 using LogiMarket.Application.Consultas;
 using LogiMarket.Application.Demostracion;
 using LogiMarket.Application.Devoluciones;
+using LogiMarket.Application.Eventos;
+using LogiMarket.Application.Puertos;
+using LogiMarket.Application.Registros;
 using LogiMarket.Application.Metricas;
 using LogiMarket.Application.Pedidos;
 using LogiMarket.Application.Seguridad;
@@ -90,5 +93,34 @@ public class RefactorizacionIntegracionTests
         cobro.Codigo.Should().Be(AccesoDenegadoException.Codigo);
         otro.Codigo.Should().Be(AccesoDenegadoException.Codigo);
         metricas.Instantanea.CobrosDenegados.Should().Be(1, "solo el comando de cobro cuenta como cobro denegado");
+    }
+
+    private sealed class ComandoConResultado(ProcesadorOutbox outbox, bool exito) : ComandoConEventos(outbox)
+    {
+        public override string Nombre => "Prueba";
+
+        public override string Entrada => $"exito={exito}";
+
+        protected override Task<(ResultadoOperacion Resultado, bool GeneroEventos)> EjecutarReceptorAsync(CancellationToken ct) =>
+            Task.FromResult((new ResultadoOperacion(exito, exito ? "OK" : "RECHAZO", "-", null), true));
+    }
+
+    [Fact]
+    public async Task R09_un_comando_con_eventos_solo_despacha_el_outbox_cuando_el_receptor_tuvo_exito()
+    {
+        await using var e = await EntornoAsync();
+        e.IniciarSesion(Rol.Ventas);
+        var demo = e.Servicios.GetRequiredService<IModoDemostracion>();
+        demo.FallarNotificaciones = true;
+        await e.PedidoPagadoAsync("C001", TipoEntrega.Estandar, ("P05", 1));
+        demo.FallarNotificaciones = false;
+
+        await e.EnAmbitoAsync(sp => sp.GetRequiredService<InvocadorComandos>().EjecutarAsync(new ComandoConResultado(sp.GetRequiredService<ProcesadorOutbox>(), exito: false)));
+        var trasRechazo = await e.ConsultarBdAsync(db => db.Outbox.Select(o => o.Estado).SingleAsync());
+        await e.EnAmbitoAsync(sp => sp.GetRequiredService<InvocadorComandos>().EjecutarAsync(new ComandoConResultado(sp.GetRequiredService<ProcesadorOutbox>(), exito: true)));
+        var trasExito = await e.ConsultarBdAsync(db => db.Outbox.Select(o => o.Estado).SingleAsync());
+
+        trasRechazo.Should().Be(EstadoOutbox.Pendiente, "un comando rechazado no debe tener efectos colaterales");
+        trasExito.Should().Be(EstadoOutbox.Procesado);
     }
 }

@@ -1,0 +1,21 @@
+R09 — lógica de postconfirmación (despacho del Outbox) duplicada en 3 comandos
+
+ANTES (commit bfda083): llamadas a ProcesarPendientesAsync en comandos concretos
+51:        if (Detalle.Exito && !Detalle.EsRepeticion)
+54:            await _outbox.ProcesarPendientesAsync(ct);
+102:        await _outbox.ProcesarPendientesAsync(ct);
+129:        if (Detalle.Exito)
+131:            await _outbox.ProcesarPendientesAsync(ct);
+Nota: DespacharPedidoCommand despachaba el Outbox sin comprobar el resultado (condición distinta a los otros dos).
+
+DESPUÉS: una sola llamada en ComandoConEventos.EjecutarAsync
+52:            await _outbox.ProcesarPendientesAsync(ct);
+
+Suite completa antes de refactorizar: 97/97 aprobadas. Después:
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P24_invocador_ejecuta_y_registra_entrada_y_resultado_incluidos_errores [10 ms]
+Passed LogiMarket.Tests.Aplicacion.ObserverPublicadorTests.P30_pedido_pagado_con_tres_suscriptores_se_atiende_una_vez_por_suscriptor [61 ms]
+Passed LogiMarket.Tests.Aplicacion.ObserverPublicadorTests.P30_si_un_suscriptor_falla_el_reintento_no_duplica_a_los_que_ya_atendieron [< 1 ms]
+Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R09_un_comando_con_eventos_solo_despacha_el_outbox_cuando_el_receptor_tuvo_exito [1 s]
+Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P35_devolucion_de_ana_por_defecto_reembolsa_54_sin_flete_una_sola_vez [1 s]
+Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P09_bodega_despacha_y_entrega_en_secuencia_y_no_despacha_sin_pago [331 ms]
+Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P37_falla_del_notificador_deja_el_evento_pendiente_y_se_recupera_una_sola_vez [294 ms]
