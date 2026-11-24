@@ -24,7 +24,7 @@ public sealed class PantallaPedidos : PantallaBase
     private readonly Button _cobrar;
 
     public PantallaPedidos(EjecutorOperaciones ejecutor, IMediadorPantallas mediador)
-        : base(ClavesPantalla.Pedidos, "Pedidos e historial", "Lenguaje de filtro (Interpreter): ESTADO = PAGADO · CLIENTE = \"Ana López\" · TOTAL > 50 (también <, >=, <=, =) combinados con AND / OR y paréntesis.", ejecutor, mediador)
+        : base(ClavesPantalla.Pedidos, "Pedidos e historial", "Filtro (Interpreter): ESTADO = PAGADO · CLIENTE = \"Ana López\" · TOTAL > 50 · con AND, OR y paréntesis.", ejecutor, mediador)
     {
         _grilla.Columna("Código", nameof(PedidoResumenDto.Codigo), peso: 55)
             .Columna("Cliente", nameof(PedidoResumenDto.Cliente), peso: 110)
@@ -77,6 +77,7 @@ public sealed class PantallaPedidos : PantallaBase
         }
 
         var detalle = new Panel { Dock = DockStyle.Fill };
+        detalle.Resize += (_, _) => _detalle.MaximumSize = new Size(Math.Max(200, detalle.ClientSize.Width - 8), 0);
         detalle.Controls.Add(_historial);
         detalle.Controls.Add(_lineas);
         detalle.Controls.Add(_detalle);
