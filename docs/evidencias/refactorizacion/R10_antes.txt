@@ -1,0 +1,2 @@
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R10_las_referencias_simuladas_de_cobro_V2_y_reembolso_usan_el_reloj_de_la_aplicacion [1 s]
+Expected (e.ConsultarBdAsync(db => db.Pagos.Select(p => p.Referencia).SingleAsync())) to start with "V2-20260110-", but "V2-20261125-0001" differs near "112" (index 7).

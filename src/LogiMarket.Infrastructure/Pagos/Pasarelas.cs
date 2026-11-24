@@ -89,11 +89,13 @@ public sealed class PasarelaV2Simulada : IProveedorPago
     private readonly Dictionary<string, ResultadoCobro> _porClave = new();
     private readonly HashSet<string> _anuladas = new();
     private readonly IRegistroAuditoria _bitacora;
+    private readonly IReloj _reloj;
     private int _secuencia;
 
-    public PasarelaV2Simulada(IRegistroAuditoria bitacora)
+    public PasarelaV2Simulada(IRegistroAuditoria bitacora, IReloj reloj)
     {
         _bitacora = bitacora;
+        _reloj = reloj;
     }
 
     public string Nombre => "V2";
@@ -112,7 +114,7 @@ public sealed class PasarelaV2Simulada : IProveedorPago
             {
                 resultado = monto > LimiteUsd
                     ? ResultadoCobro.Rechazado(Nombre, "EXCEDE LIMITE DE AUTORIZACION")
-                    : new ResultadoCobro(true, Nombre, $"V2-{DateTime.UtcNow:yyyyMMdd}-{++_secuencia:0000}", "Aprobado por proveedor V2");
+                    : new ResultadoCobro(true, Nombre, $"V2-{_reloj.AhoraUtc:yyyyMMdd}-{++_secuencia:0000}", "Aprobado por proveedor V2");
                 _porClave[claveIdempotencia] = resultado;
             }
         }
@@ -204,11 +206,13 @@ public sealed class ServicioReembolsoSimulado : IServicioReembolso
     private readonly object _candado = new();
     private readonly Dictionary<string, ResultadoCobro> _porClave = new();
     private readonly IRegistroAuditoria _bitacora;
+    private readonly IReloj _reloj;
     private int _secuencia;
 
-    public ServicioReembolsoSimulado(IRegistroAuditoria bitacora)
+    public ServicioReembolsoSimulado(IRegistroAuditoria bitacora, IReloj reloj)
     {
         _bitacora = bitacora;
+        _reloj = reloj;
     }
 
     public async Task<ResultadoCobro> ReembolsarAsync(decimal monto, string claveReembolso, CancellationToken ct = default)
@@ -219,7 +223,7 @@ public sealed class ServicioReembolsoSimulado : IServicioReembolso
         {
             if (!_porClave.TryGetValue(claveReembolso, out resultado!))
             {
-                resultado = new ResultadoCobro(true, "REEMBOLSO", $"RMB-{DateTime.UtcNow:yyyyMMddHHmmss}-{++_secuencia:000}", "Reembolso simulado aprobado");
+                resultado = new ResultadoCobro(true, "REEMBOLSO", $"RMB-{_reloj.AhoraUtc:yyyyMMddHHmmss}-{++_secuencia:000}", "Reembolso simulado aprobado");
                 _porClave[claveReembolso] = resultado;
             }
         }

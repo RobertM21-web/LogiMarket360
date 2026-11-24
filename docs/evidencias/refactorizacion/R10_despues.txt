@@ -1,0 +1,1 @@
+Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R10_las_referencias_simuladas_de_cobro_V2_y_reembolso_usan_el_reloj_de_la_aplicacion [1 s]

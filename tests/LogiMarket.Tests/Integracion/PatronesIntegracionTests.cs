@@ -64,7 +64,7 @@ public class PatronesIntegracionTests(ITestOutputHelper salida)
     {
         var bitacora = new AuditoriaEnMemoria();
         var legado = new PasarelaLegadaSimulada();
-        IProveedorPago[] proveedores = [new PasarelaLegadaAdapter(legado, bitacora), new PasarelaV2Simulada(bitacora)];
+        IProveedorPago[] proveedores = [new PasarelaLegadaAdapter(legado, bitacora), new PasarelaV2Simulada(bitacora, new RelojFijo(DatosDominio.Ahora))];
 
         foreach (var p in proveedores)
         {
