@@ -205,6 +205,7 @@ public class PatronesIntegracionTests(ITestOutputHelper salida)
         (await e.ConsultarBdAsync(db => db.Auditoria.CountAsync(a => a.Categoria == "PAGO"))).Should().Be(0, "no hay LOG de inicio/fin de cobro");
         (await e.ConsultarBdAsync(db => db.Auditoria.CountAsync(a => a.Categoria == "SEGURIDAD" && a.Resultado == "DENEGADO"))).Should().Be(2);
         e.Servicios.GetRequiredService<PasarelaLegadaSimulada>().OperacionesProcesadas.Should().Be(0);
+        e.Servicios.GetRequiredService<MetricasSesion>().Instantanea.CobrosDenegados.Should().Be(2, "se cuentan la llamada directa (Proxy) y el comando de confirmación");
     }
 
     [Fact]
