@@ -5,14 +5,13 @@ using LogiMarket.WinForms.Comun;
 using LogiMarket.WinForms.Componentes;
 using LogiMarket.WinForms.Mediador;
 using Microsoft.Extensions.DependencyInjection;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.WinForms.Pantallas;
 
 /// <summary>Pantalla 06 — Pedidos e historial: filtro con el lenguaje del Interpreter y línea de tiempo de estados.</summary>
 public sealed class PantallaPedidos : PantallaBase
 {
-    private static readonly string[] Flujo = ["BORRADOR", "VALIDADO", "PAGADO", "DESPACHADO", "ENTREGADO"];
-
     private readonly TextBox _filtro = new() { Width = 420, AccessibleName = "Filtro de pedidos", PlaceholderText = "ESTADO = PAGADO AND TOTAL > 50" };
     private readonly GrillaDatos _grilla = new() { AccessibleName = "Pedidos" };
     private readonly FlowLayoutPanel _linea = new() { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(0, 4, 0, 8) };
@@ -63,7 +62,7 @@ public sealed class PantallaPedidos : PantallaBase
         });
 
         var chips = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top };
-        foreach (var estado in Flujo.Append("CANCELADO"))
+        foreach (var estado in NombresEstado.Todos)
         {
             var chip = Tema.Chip(estado, Tema.ColorEstado(estado));
             chip.Cursor = Cursors.Hand;
@@ -156,19 +155,19 @@ public sealed class PantallaPedidos : PantallaBase
         }
 
         var alcanzados = d.Historial.Select(h => h.Nuevo).ToHashSet();
-        foreach (var estado in Flujo)
+        foreach (var estado in NombresEstado.Flujo)
         {
             var activo = alcanzados.Contains(estado);
             _linea.Controls.Add(Tema.Chip(estado, activo ? Tema.ColorEstado(estado) : Color.FromArgb(203, 213, 225)));
-            if (estado != Flujo[^1])
+            if (estado != NombresEstado.Flujo[^1])
             {
                 _linea.Controls.Add(Tema.Etiqueta("→", color: Tema.TextoSuave));
             }
         }
 
-        if (p.Estado == "CANCELADO")
+        if (p.Estado == NombresEstado.Cancelado)
         {
-            _linea.Controls.Add(Tema.Chip("CANCELADO", Tema.Peligro));
+            _linea.Controls.Add(Tema.Chip(NombresEstado.Cancelado, Tema.Peligro));
         }
 
         if (p.Devuelto)
@@ -181,8 +180,8 @@ public sealed class PantallaPedidos : PantallaBase
             + $"Cobro: {d.ReferenciaCobro ?? "—"} {(d.Proveedor is null ? string.Empty : $"({d.Proveedor})")} · Guía: {d.Despacho?.Guia ?? "—"}";
         _lineas.Mostrar(d.Lineas);
         _historial.Mostrar(d.Historial);
-        _cancelar.Enabled = Puede(Operacion.CancelarPedido) && p.Estado is "BORRADOR" or "VALIDADO";
-        _cobrar.Enabled = p.Estado == "VALIDADO" && Puede(Operacion.CobrarPedido);
+        _cancelar.Enabled = Puede(Operacion.CancelarPedido) && p.Estado is NombresEstado.Borrador or NombresEstado.Validado;
+        _cobrar.Enabled = p.Estado == NombresEstado.Validado && Puede(Operacion.CobrarPedido);
     }
 
     private async Task CancelarAsync()

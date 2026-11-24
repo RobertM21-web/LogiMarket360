@@ -1,0 +1,4 @@
+Failed LogiMarket.Tests.Calidad.RegresionInterfazTests.R03_un_boton_primario_deshabilitado_cambia_de_aspecto_y_lo_recupera_al_habilitarse [228 ms]
+Failed LogiMarket.Tests.Calidad.RegresionInterfazTests.R01_la_grilla_devuelve_la_fila_seleccionada_aunque_no_sea_la_fila_actual [82 ms]
+Xunit.Sdk.XunitException: Expected grilla.Seleccionado<Fila>()!.Codigo to be "PED-003", but "PED-001" differs near "1" (index 6).
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 81 ms - LogiMarket.Tests.dll (net8.0)

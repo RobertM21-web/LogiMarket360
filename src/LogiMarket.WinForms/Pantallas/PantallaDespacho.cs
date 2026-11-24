@@ -6,6 +6,7 @@ using LogiMarket.WinForms.Comun;
 using LogiMarket.WinForms.Componentes;
 using LogiMarket.WinForms.Mediador;
 using Microsoft.Extensions.DependencyInjection;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.WinForms.Pantallas;
 
@@ -60,7 +61,7 @@ public sealed class PantallaDespacho : PantallaBase
         var (ok, pedidos) = await Ejecutor.IntentarAsync(this, sp => sp.GetRequiredService<ConsultasOperativas>().PedidosAsync(filtro));
         if (ok)
         {
-            _grilla.Mostrar(pedidos!.OrderBy(p => p.Estado == "PAGADO" ? 0 : p.Estado == "DESPACHADO" ? 1 : 2).ThenBy(p => p.Id));
+            _grilla.Mostrar(pedidos!.OrderBy(p => p.Estado == NombresEstado.Pagado ? 0 : p.Estado == NombresEstado.Despachado ? 1 : 2).ThenBy(p => p.Id));
             await MostrarDetalleAsync();
         }
     }
@@ -68,8 +69,8 @@ public sealed class PantallaDespacho : PantallaBase
     private async Task MostrarDetalleAsync()
     {
         var p = _grilla.Seleccionado<PedidoResumenDto>();
-        _despachar.Enabled = p?.Estado == "PAGADO" && Puede(Operacion.DespacharPedido);
-        _entregar.Enabled = p?.Estado == "DESPACHADO" && Puede(Operacion.EntregarPedido);
+        _despachar.Enabled = p?.Estado == NombresEstado.Pagado && Puede(Operacion.DespacharPedido);
+        _entregar.Enabled = p?.Estado == NombresEstado.Despachado && Puede(Operacion.EntregarPedido);
         if (p is null)
         {
             foreach (var l in new[] { _pedido, _estado, _entrega, _guia, _plazo, _estimada, _entregado })

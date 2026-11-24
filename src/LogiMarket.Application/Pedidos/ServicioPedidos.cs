@@ -9,6 +9,7 @@ using LogiMarket.Domain.Entrega;
 using LogiMarket.Domain.Pedidos;
 using LogiMarket.Domain.Pedidos.Borrador;
 using LogiMarket.Domain.Promociones;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.Application.Pedidos;
 
@@ -144,7 +145,7 @@ public sealed class ServicioPedidos
             ct);
 
         borrador.AsociarPedido(pedido.Id);
-        return new ResultadoValidacionPedido(true, "VALIDADO", $"Pedido {pedido.Codigo} validado. Total {pedido.Total}.", pedido.Id, pedido.Codigo, validacion.Recorrido);
+        return new ResultadoValidacionPedido(true, NombresEstado.Validado, $"Pedido {pedido.Codigo} validado. Total {pedido.Total}.", pedido.Id, pedido.Codigo, validacion.Recorrido);
     }
 
     /// <summary>Cancela un pedido BORRADOR o VALIDADO (el estado decide; PAGADO se rechaza).</summary>

@@ -1,6 +1,7 @@
 using System.Globalization;
 using LogiMarket.Application.Consultas;
 using LogiMarket.Application.Puertos;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Application.Comprobantes;
 
@@ -27,7 +28,7 @@ public abstract class Comprobante
 
     protected abstract IReadOnlyList<string> ConstruirLineas();
 
-    protected static string Usd(decimal valor) => "USD " + valor.ToString("0.00", Cultura);
+    protected static string Usd(decimal valor) => Dinero.Formatear(valor);
 
     protected static IEnumerable<string> Encabezado(string tipo) =>
     [

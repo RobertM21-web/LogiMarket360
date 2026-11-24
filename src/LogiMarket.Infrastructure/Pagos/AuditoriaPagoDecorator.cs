@@ -1,5 +1,6 @@
 using LogiMarket.Application.Puertos;
 using LogiMarket.Application.Seguridad;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Infrastructure.Pagos;
 
@@ -28,7 +29,7 @@ public sealed class AuditoriaPagoDecorator : IPasarelaPago
         var usuario = _sesion.Usuario?.NombreUsuario ?? "sistema";
         try
         {
-            await _bitacora.RegistrarAsync("PAGO", "COBRO INICIO", $"USD {monto:0.00} clave {claveIdempotencia}", usuario, "INICIO", correlacion, ct);
+            await _bitacora.RegistrarAsync("PAGO", "COBRO INICIO", $"{Dinero.Formatear(monto)} clave {claveIdempotencia}", usuario, "INICIO", correlacion, ct);
             var resultado = await _interna.CobrarAsync(monto, claveIdempotencia, ct);
             await _bitacora.RegistrarAsync(
                 "PAGO",

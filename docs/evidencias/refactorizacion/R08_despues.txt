@@ -1,0 +1,2 @@
+Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos [6 ms]
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad [1 s]

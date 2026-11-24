@@ -6,6 +6,7 @@ using LogiMarket.Application.Seguridad;
 using LogiMarket.WinForms.Comun;
 using LogiMarket.WinForms.Mediador;
 using Microsoft.Extensions.DependencyInjection;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.WinForms.Pantallas;
 
@@ -121,7 +122,7 @@ public sealed class PantallaCobro : PantallaBase
         // Pendientes de cobro; los pagados solo si se piden o si es el pedido recién enviado/cobrado (para ver su referencia).
         var anterior = _pedidoPreferido ?? (_pedido.SelectedItem as OpcionPedido)?.Pedido.Id;
         _pedidoPreferido = null;
-        var visibles = pedidos!.Where(p => p.Estado == "VALIDADO" || _incluirPagados.Checked || p.Id == anterior);
+        var visibles = pedidos!.Where(p => p.Estado == NombresEstado.Validado || _incluirPagados.Checked || p.Id == anterior);
         _pedido.Items.Clear();
         _pedido.Items.AddRange(visibles.OrderByDescending(p => p.Id).Select(p => (object)new OpcionPedido(p)).ToArray());
         _pedido.SelectedItem = _pedido.Items.Cast<OpcionPedido>().FirstOrDefault(o => o.Pedido.Id == anterior) ?? _pedido.Items.Cast<object>().FirstOrDefault();

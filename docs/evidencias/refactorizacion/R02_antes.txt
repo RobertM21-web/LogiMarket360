@@ -1,0 +1,3 @@
+Failed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad [1 s]
+Expected e.Servicios.GetRequiredService<MetricasSesion>().Instantanea.CobrosDenegados to be 2 because se cuentan la llamada directa (Proxy) y el comando de confirmación, but found 1.
+Failed!  - Failed:     1, Passed:     4, Skipped:     0, Total:     5, Duration: 1 s - LogiMarket.Tests.dll (net8.0)

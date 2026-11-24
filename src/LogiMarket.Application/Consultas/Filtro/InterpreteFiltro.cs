@@ -1,4 +1,5 @@
 using System.Globalization;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.Application.Consultas.Filtro;
 
@@ -186,7 +187,7 @@ internal static class Lexer
 /// </summary>
 public static class InterpreteFiltro
 {
-    private static readonly string[] Estados = ["BORRADOR", "VALIDADO", "PAGADO", "DESPACHADO", "ENTREGADO", "CANCELADO"];
+    private static readonly IReadOnlyList<string> Estados = NombresEstado.Todos;
 
     public static IExpresionFiltro Analizar(string filtro)
     {

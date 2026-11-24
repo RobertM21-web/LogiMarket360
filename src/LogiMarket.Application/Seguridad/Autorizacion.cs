@@ -46,6 +46,9 @@ public sealed class SesionLocal : ISesionActual
 /// <summary>Intento de operación sin permiso.</summary>
 public sealed class AccesoDenegadoException : Exception
 {
+    /// <summary>Código estable con el que toda capa informa una denegación (resultados, cadena y UI).</summary>
+    public const string Codigo = "ACCESO_DENEGADO";
+
     public AccesoDenegadoException(Operacion operacion, string usuario, Rol? rol)
         : base($"Acceso denegado: el rol {rol?.ToString().ToUpperInvariant() ?? "ANÓNIMO"} no puede {Describir(operacion)}.")
     {

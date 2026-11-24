@@ -16,37 +16,79 @@ public interface IComandoNegocio
     string Entrada { get; }
 
     Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct);
+
+    /// <summary>
+    /// Reacción del comando cuando Application deniega el acceso (por defecto ninguna). Cada comando
+    /// decide qué métrica afecta; el invocador no necesita conocer tipos concretos (OCP).
+    /// </summary>
+    void AlDenegarseAcceso(MetricasSesion metricas)
+    {
+    }
 }
 
-public sealed class ConfirmarPedidoCommand : IComandoNegocio
+/// <summary>
+/// Base de los comandos que generan eventos durables: fija la secuencia "ejecutar receptor → si hubo éxito
+/// con eventos nuevos, despachar el Outbox". Los comandos concretos solo aportan su receptor.
+/// </summary>
+public abstract class ComandoConEventos : IComandoNegocio
 {
-    private readonly ConfirmacionPedidoFacade _facade;
     private readonly ProcesadorOutbox _outbox;
-    private readonly int _pedidoId;
 
-    public ConfirmarPedidoCommand(ConfirmacionPedidoFacade facade, ProcesadorOutbox outbox, int pedidoId)
+    protected ComandoConEventos(ProcesadorOutbox outbox)
     {
-        _facade = facade;
         _outbox = outbox;
-        _pedidoId = pedidoId;
     }
 
-    public string Nombre => "ConfirmarPedido";
+    public abstract string Nombre { get; }
 
-    public string Entrada => $"pedidoId={_pedidoId}";
-
-    public ResultadoConfirmacion? Detalle { get; private set; }
+    public abstract string Entrada { get; }
 
     public async Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct)
     {
-        Detalle = await _facade.ConfirmarAsync(_pedidoId, ct);
-        if (Detalle.Exito && !Detalle.EsRepeticion)
+        var (resultado, generoEventos) = await EjecutarReceptorAsync(ct);
+        if (resultado.Exito && generoEventos)
         {
             // Postconfirmación: los eventos durables salen del Outbox después de confirmar la transacción.
             await _outbox.ProcesarPendientesAsync(ct);
         }
 
-        return new ResultadoOperacion(Detalle.Exito, Detalle.Codigo, Detalle.Mensaje, _pedidoId);
+        return resultado;
+    }
+
+    public virtual void AlDenegarseAcceso(MetricasSesion metricas)
+    {
+    }
+
+    protected abstract Task<(ResultadoOperacion Resultado, bool GeneroEventos)> EjecutarReceptorAsync(CancellationToken ct);
+}
+
+public sealed class ConfirmarPedidoCommand : ComandoConEventos
+{
+    private readonly ConfirmacionPedidoFacade _facade;
+    private readonly int _pedidoId;
+
+    public ConfirmarPedidoCommand(ConfirmacionPedidoFacade facade, ProcesadorOutbox outbox, int pedidoId)
+        : base(outbox)
+    {
+        _facade = facade;
+        _pedidoId = pedidoId;
+    }
+
+    public override string Nombre => "ConfirmarPedido";
+
+    public override string Entrada => $"pedidoId={_pedidoId}";
+
+    public ResultadoConfirmacion? Detalle { get; private set; }
+
+    /// <summary>La Facade rechaza antes de llegar al Proxy: el intento de cobro denegado se contabiliza aquí.</summary>
+    public override void AlDenegarseAcceso(MetricasSesion metricas) => metricas.RegistrarCobroDenegado();
+
+    protected override async Task<(ResultadoOperacion, bool)> EjecutarReceptorAsync(CancellationToken ct)
+    {
+        Detalle = await _facade.ConfirmarAsync(_pedidoId, ct);
+
+        // Una repetición idempotente devuelve el resultado original y no genera eventos nuevos.
+        return (new ResultadoOperacion(Detalle.Exito, Detalle.Codigo, Detalle.Mensaje, _pedidoId), !Detalle.EsRepeticion);
     }
 }
 
@@ -68,59 +110,48 @@ public sealed class CancelarPedidoCommand : IComandoNegocio
     public Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct) => _servicio.CancelarAsync(_pedidoId, ct);
 }
 
-public sealed class DespacharPedidoCommand : IComandoNegocio
+public sealed class DespacharPedidoCommand : ComandoConEventos
 {
     private readonly ServicioLogistica _servicio;
-    private readonly ProcesadorOutbox _outbox;
     private readonly int _pedidoId;
 
     public DespacharPedidoCommand(ServicioLogistica servicio, ProcesadorOutbox outbox, int pedidoId)
+        : base(outbox)
     {
         _servicio = servicio;
-        _outbox = outbox;
         _pedidoId = pedidoId;
     }
 
-    public string Nombre => "DespacharPedido";
+    public override string Nombre => "DespacharPedido";
 
-    public string Entrada => $"pedidoId={_pedidoId}";
+    public override string Entrada => $"pedidoId={_pedidoId}";
 
-    public async Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct)
-    {
-        var resultado = await _servicio.DespacharAsync(_pedidoId, ct);
-        await _outbox.ProcesarPendientesAsync(ct);
-        return resultado;
-    }
+    protected override async Task<(ResultadoOperacion, bool)> EjecutarReceptorAsync(CancellationToken ct) =>
+        (await _servicio.DespacharAsync(_pedidoId, ct), true);
 }
 
-public sealed class ProcesarDevolucionCommand : IComandoNegocio
+public sealed class ProcesarDevolucionCommand : ComandoConEventos
 {
     private readonly ServicioDevoluciones _servicio;
-    private readonly ProcesadorOutbox _outbox;
     private readonly SolicitudDevolucion _solicitud;
 
     public ProcesarDevolucionCommand(ServicioDevoluciones servicio, ProcesadorOutbox outbox, SolicitudDevolucion solicitud)
+        : base(outbox)
     {
         _servicio = servicio;
-        _outbox = outbox;
         _solicitud = solicitud;
     }
 
-    public string Nombre => "ProcesarDevolucion";
+    public override string Nombre => "ProcesarDevolucion";
 
-    public string Entrada => $"pedidoId={_solicitud.PedidoId}; motivo={_solicitud.Motivo}; sinUso={_solicitud.ProductoSinUso}";
+    public override string Entrada => $"pedidoId={_solicitud.PedidoId}; motivo={_solicitud.Motivo}; sinUso={_solicitud.ProductoSinUso}";
 
     public ResultadoDevolucion? Detalle { get; private set; }
 
-    public async Task<ResultadoOperacion> EjecutarAsync(CancellationToken ct)
+    protected override async Task<(ResultadoOperacion, bool)> EjecutarReceptorAsync(CancellationToken ct)
     {
         Detalle = await _servicio.ProcesarAsync(_solicitud, ct);
-        if (Detalle.Exito)
-        {
-            await _outbox.ProcesarPendientesAsync(ct);
-        }
-
-        return new ResultadoOperacion(Detalle.Exito, Detalle.Codigo, Detalle.Mensaje, _solicitud.PedidoId);
+        return (new ResultadoOperacion(Detalle.Exito, Detalle.Codigo, Detalle.Mensaje, _solicitud.PedidoId), true);
     }
 }
 
@@ -199,12 +230,8 @@ public sealed class InvocadorComandos
         }
         catch (AccesoDenegadoException ex)
         {
-            resultado = ResultadoOperacion.Error("ACCESO_DENEGADO", ex.Message);
-            if (comando is ConfirmarPedidoCommand)
-            {
-                // La Facade rechaza antes de llegar al Proxy: el intento de cobro denegado se contabiliza aquí.
-                _metricas.RegistrarCobroDenegado();
-            }
+            resultado = ResultadoOperacion.Error(AccesoDenegadoException.Codigo, ex.Message);
+            comando.AlDenegarseAcceso(_metricas);
         }
 
         var usuario = _sesion.Usuario?.NombreUsuario ?? "anónimo";

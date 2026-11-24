@@ -1,0 +1,2 @@
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R07_la_alerta_de_devoluciones_por_revisar_usa_el_reloj_de_la_aplicacion [254 ms]
+Expected dentroDelPlazo.Alertas {"2 producto(s) con stock bajo: P02=4, P04=4", "1 evento(s) Outbox pendiente(s)"} to have an item matching a.StartsWith("1 pedido(s) entregado(s) dentro del plazo").
