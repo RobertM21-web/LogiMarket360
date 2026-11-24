@@ -1,4 +1,5 @@
 using System.Globalization;
+using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.WinForms.Comun;
 
@@ -139,12 +140,12 @@ public static class Tema
 
     public static Color ColorEstado(string estado) => estado switch
     {
-        "BORRADOR" => Color.FromArgb(100, 116, 139),
-        "VALIDADO" => Color.FromArgb(2, 132, 199),
-        "PAGADO" => Exito,
-        "DESPACHADO" => Color.FromArgb(124, 58, 237),
-        "ENTREGADO" => Color.FromArgb(15, 118, 110),
-        "CANCELADO" => Peligro,
+        NombresEstado.Borrador => Color.FromArgb(100, 116, 139),
+        NombresEstado.Validado => Color.FromArgb(2, 132, 199),
+        NombresEstado.Pagado => Exito,
+        NombresEstado.Despachado => Color.FromArgb(124, 58, 237),
+        NombresEstado.Entregado => Color.FromArgb(15, 118, 110),
+        NombresEstado.Cancelado => Peligro,
         _ => TextoSuave,
     };
 }
