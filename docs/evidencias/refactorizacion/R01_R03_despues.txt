@@ -1,0 +1,2 @@
+Passed LogiMarket.Tests.Calidad.RegresionInterfazTests.R03_un_boton_primario_deshabilitado_cambia_de_aspecto_y_lo_recupera_al_habilitarse [41 ms]
+Passed LogiMarket.Tests.Calidad.RegresionInterfazTests.R01_la_grilla_devuelve_la_fila_seleccionada_aunque_no_sea_la_fila_actual [91 ms]
