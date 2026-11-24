@@ -1,6 +1,7 @@
 using LogiMarket.Application.Consultas.Filtro;
 using LogiMarket.Application.Seguridad;
 using LogiMarket.Domain.Pedidos.Estados;
+using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Application.Consultas;
 
@@ -25,9 +26,11 @@ public sealed class ConsultasOperativas
     private readonly ILecturaPedidos _pedidos;
     private readonly ILecturaCatalogo _catalogo;
     private readonly ILecturaBitacora _bitacora;
+    private readonly IReloj _reloj;
 
-    public ConsultasOperativas(IAutorizador autorizador, ILecturaPedidos pedidos, ILecturaCatalogo catalogo, ILecturaBitacora bitacora)
+    public ConsultasOperativas(IAutorizador autorizador, ILecturaPedidos pedidos, ILecturaCatalogo catalogo, ILecturaBitacora bitacora, IReloj reloj)
     {
+        _reloj = reloj;
         _autorizador = autorizador;
         _pedidos = pedidos;
         _catalogo = catalogo;
@@ -98,7 +101,7 @@ public sealed class ConsultasOperativas
 
         var bajos = productos.Where(p => p.Activo && p.Stock <= UmbralStockBajo).ToList();
         var pendientes = outbox.Count(o => o.Estado == "PENDIENTE");
-        var porRevisar = pedidos.Count(p => p.Estado == NombresEstado.Entregado && !p.Devuelto && p.FechaEntregaUtc >= DateTime.UtcNow.AddDays(-30));
+        var porRevisar = pedidos.Count(p => p.Estado == NombresEstado.Entregado && !p.Devuelto && p.FechaEntregaUtc >= _reloj.AhoraUtc.AddDays(-30));
         var alertas = new List<string>();
         if (bajos.Count > 0)
         {

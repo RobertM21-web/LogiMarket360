@@ -1,0 +1,7 @@
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos [22 ms]
+Expected metricas.Instantanea.CobrosDenegados to be 1 because solo el comando de cobro cuenta como cobro denegado, but found 0 (difference of -1).
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R10_las_referencias_simuladas_de_cobro_V2_y_reembolso_usan_el_reloj_de_la_aplicacion [1 s]
+Expected (e.ConsultarBdAsync(db => db.Pagos.Select(p => p.Referencia).SingleAsync())) to start with "V2-20260110-", but "V2-20261125-0001" differs near "112" (index 7).
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R07_la_alerta_de_devoluciones_por_revisar_usa_el_reloj_de_la_aplicacion [254 ms]
+Expected dentroDelPlazo.Alertas {"2 producto(s) con stock bajo: P02=4, P04=4", "1 evento(s) Outbox pendiente(s)"} to have an item matching a.StartsWith("1 pedido(s) entregado(s) dentro del plazo").
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 1 s - LogiMarket.Tests.dll (net8.0)
