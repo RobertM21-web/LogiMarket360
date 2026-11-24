@@ -18,8 +18,8 @@ public sealed class PantallaReportes : PantallaBase
     private const string VistaPrevia = "VISTA PREVIA";
     private const string ArchivoTxt = "ARCHIVO TXT";
 
-    private readonly DateTimePicker _desde = new() { Format = DateTimePickerFormat.Short, Width = 120, AccessibleName = "Desde" };
-    private readonly DateTimePicker _hasta = new() { Format = DateTimePickerFormat.Short, Width = 120, AccessibleName = "Hasta" };
+    private readonly DateTimePicker _desde = new() { Format = DateTimePickerFormat.Short, Width = 150, AccessibleName = "Desde" };
+    private readonly DateTimePicker _hasta = new() { Format = DateTimePickerFormat.Short, Width = 150, AccessibleName = "Hasta" };
     private readonly TarjetaKpi _confirmados = new("Pedidos confirmados");
     private readonly TarjetaKpi _netas = new("Ventas netas");
     private readonly TarjetaKpi _devoluciones = new("Devoluciones");
@@ -78,7 +78,7 @@ public sealed class PantallaReportes : PantallaBase
         Contenido.Controls.Add(Tema.Fila(Tema.Etiqueta("&Desde:"), _desde, Tema.Etiqueta("&Hasta:"), _hasta, Tema.Boton("&Consultar", async (_, _) => await ActualizarAsync(), primario: true)));
         Resize += (_, _) =>
         {
-            division.SplitterDistance = Math.Max(300, (int)(division.Width * 0.55));
+            division.SplitterDistance = Math.Max(300, (int)(division.Width * 0.42));
             izquierda.SplitterDistance = Math.Max(120, (int)(izquierda.Height * 0.45));
         };
     }
@@ -124,7 +124,7 @@ public sealed class PantallaReportes : PantallaBase
         if (salida == ArchivoTxt)
         {
             _ultimaRuta = resultado;
-            _ruta.Text = $"Archivo generado: {resultado} (clic para abrir la carpeta)";
+            _ruta.Text = $"Archivo generado: {Path.GetFileName(resultado)} (clic para abrir la carpeta)";
             _vista.Text = File.ReadAllText(resultado!);
         }
     }
@@ -177,7 +177,7 @@ public sealed class GraficoBarras : Control
             return;
         }
 
-        var area = new Rectangle(40, 12, Math.Max(10, Width - 56), Math.Max(10, Height - 44));
+        var area = new Rectangle(40, 30, Math.Max(10, Width - 56), Math.Max(10, Height - 62));
         var maximo = Math.Max(1m, _datos.Max(d => d.Valor));
         using var eje = new Pen(Tema.Borde);
         g.DrawLine(eje, area.Left, area.Bottom, area.Right, area.Bottom);

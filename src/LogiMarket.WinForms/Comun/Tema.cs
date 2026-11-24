@@ -48,6 +48,13 @@ public static class Tema
             UseVisualStyleBackColor = false,
         };
         b.FlatAppearance.BorderColor = primario ? Primario : Borde;
+        b.EnabledChanged += (_, _) =>
+        {
+            // Estado deshabilitado visible también en botones planos (no basta el color de texto).
+            b.BackColor = !b.Enabled ? Color.FromArgb(226, 230, 236) : primario ? Primario : Superficie;
+            b.ForeColor = !b.Enabled ? TextoSuave : primario ? Color.White : Texto;
+            b.FlatAppearance.BorderColor = !b.Enabled ? Borde : primario ? Primario : Borde;
+        };
         b.Click += alPulsar;
         return b;
     }

@@ -200,6 +200,11 @@ public sealed class InvocadorComandos
         catch (AccesoDenegadoException ex)
         {
             resultado = ResultadoOperacion.Error("ACCESO_DENEGADO", ex.Message);
+            if (comando is ConfirmarPedidoCommand)
+            {
+                // La Facade rechaza antes de llegar al Proxy: el intento de cobro denegado se contabiliza aquí.
+                _metricas.RegistrarCobroDenegado();
+            }
         }
 
         var usuario = _sesion.Usuario?.NombreUsuario ?? "anónimo";

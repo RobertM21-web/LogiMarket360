@@ -100,7 +100,7 @@ public sealed class GrillaDatos : DataGridView
 
     public void Mostrar<T>(IEnumerable<T> filas)
     {
-        var clave = CurrentRow?.DataBoundItem is { } actual ? ClaveDe?.Invoke(actual) : null;
+        var clave = (SelectedRows.Count > 0 ? SelectedRows[0] : CurrentRow)?.DataBoundItem is { } actual ? ClaveDe?.Invoke(actual) : null;
         var lista = filas.ToList();
         DataSource = new BindingList<T>(lista);
         if (clave is null)
@@ -118,8 +118,9 @@ public sealed class GrillaDatos : DataGridView
         }
     }
 
+    /// <summary>Fila seleccionada (o la fila actual si no hay selección explícita).</summary>
     public T? Seleccionado<T>()
-        where T : class => CurrentRow?.DataBoundItem as T;
+        where T : class => (SelectedRows.Count > 0 ? SelectedRows[0] : CurrentRow)?.DataBoundItem as T;
 
     protected override void OnCellFormatting(DataGridViewCellFormattingEventArgs e)
     {
