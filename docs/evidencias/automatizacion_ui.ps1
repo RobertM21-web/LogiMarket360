@@ -1,4 +1,4 @@
-# Ayudante de automatización UI (UI Automation + PrintWindow) para capturas reales de LogiMarket 360.
+﻿# Ayudante de automatización UI (UI Automation + PrintWindow) para capturas reales de LogiMarket 360.
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, System.Drawing, System.Windows.Forms
 Add-Type @"
 using System;
