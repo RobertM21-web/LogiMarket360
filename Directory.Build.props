@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Authors>Montesdeoca Chafla Robert Alexander</Authors>
     <Product>LogiMarket 360</Product>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <NeutralLanguage>es-EC</NeutralLanguage>
     <TreatWarningsAsErrors Condition="'$(MSBuildProjectName)' == 'LogiMarket.Domain' Or '$(MSBuildProjectName)' == 'LogiMarket.Application'">true</TreatWarningsAsErrors>
   </PropertyGroup>
