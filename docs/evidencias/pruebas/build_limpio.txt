@@ -1,5 +1,5 @@
-Verificación del ZIP limpio — 2026-11-25 00:19
-Archivo: APE04_verif.zip · 5139 KB · 307 entradas · sin bin/obj/.vs/*.db
+Verificación del ZIP limpio — 2026-11-25 00:44
+Archivo: APE04_verif.zip · 3783 KB · 311 entradas · sin bin/obj/.vs/*.db
 SDK: 8.0.428 · Microsoft Windows NT 10.0.26200.0
 [restore] código de salida 0
 [build] código de salida 0
@@ -7,4 +7,4 @@ SDK: 8.0.428 · Microsoft Windows NT 10.0.26200.0
     0 Warning(s)
     0 Error(s)
 [test] código de salida 0
-    Passed!  - Failed:     0, Passed:    98, Skipped:     0, Total:    98, Duration: 3 s - LogiMarket.Tests.dll (net8.0)
+    Passed!  - Failed:     0, Passed:   100, Skipped:     0, Total:   100, Duration: 3 s - LogiMarket.Tests.dll (net8.0)
