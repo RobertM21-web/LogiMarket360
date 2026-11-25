@@ -112,6 +112,7 @@ public static class ContenedorLogiMarket
         services.AddScoped<ServicioComprobantes>();
         services.AddScoped<ServicioDemostracion>();
         services.AddScoped<ConsultasOperativas>();
+        services.AddScoped<ConsultaCatalogoVisual>();
         services.AddScoped<DependenciasDevolucion>();
         services.AddScoped<ProcesarDevolucion, DevolucionDefecto>();
         services.AddScoped<ProcesarDevolucion, DevolucionArrepentimiento>();

@@ -1,0 +1,7 @@
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P21_editar_un_producto_reemplaza_su_flyweight_y_la_vista_no_muestra_metadatos_obsoletos [1 s]
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P21_flyweight_comparte_metadatos_entre_mil_filas_y_reduce_memoria_en_escenario_equivalente [9 ms]
+Filas: 10000; instancias de metadatos con Flyweight: 5; sin Flyweight: 10000
+Bytes asignados con Flyweight: 560.536; sin Flyweight: 5.040.256; reducción: 88,9%
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P34_P21_la_pantalla_de_catalogo_obtiene_precio_por_composite_desglose_y_peso_por_visitor_y_filas_flyweight [128 ms]
+Total tests: 3
+Passed: 3

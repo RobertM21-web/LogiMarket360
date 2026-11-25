@@ -9,10 +9,10 @@ una prueba automatizada (`docs/MATRIZ_PATRONES.md`).
 
 | Indicador | Valor |
 |---|---|
-| Pruebas automatizadas | **98 / 98 aprobadas** (`docs/evidencias/pruebas/resultado_pruebas.txt`) |
+| Pruebas automatizadas | **100 / 100 aprobadas** (`docs/evidencias/pruebas/resultado_pruebas.txt`) |
 | Matriz P01–P38 | **38 / 38** (`docs/MATRIZ_PRUEBAS_38.md`) |
 | Patrones GoF | **23 / 23** (`docs/MATRIZ_PATRONES.md`) |
-| Riesgos refactorizados con prueba antes/después | **10** (`docs/RIESGOS_REFACTORIZACION.md`) |
+| Riesgos refactorizados con prueba antes/después | **11** (`docs/RIESGOS_REFACTORIZACION.md`) |
 
 ## 1. Requisitos
 
@@ -39,7 +39,7 @@ Desde la carpeta que contiene `LogiMarket360.sln`:
 ```powershell
 dotnet restore
 dotnet build -c Release
-dotnet test -c Release            # 98 pruebas: dominio, aplicación, integración SQLite, presentación y arquitectura
+dotnet test -c Release            # 100 pruebas: dominio, aplicación, integración SQLite, presentación y arquitectura
 ```
 
 Las pruebas de integración crean bases SQLite **temporales y aisladas** en `%TEMP%\LogiMarketPruebas\…`. No tocan la base de la
@@ -140,7 +140,7 @@ Infrastructure a Application y Domain; WinForms es el único que conoce las impl
 | `docs/diagramas/` | Contexto, componentes, clases críticas, estados, secuencias y modelo relacional (Mermaid + SVG) |
 | `docs/MATRIZ_PATRONES.md` | 23/23 patrones: problema, participantes, archivo/método, recorrido, prueba, evidencia |
 | `docs/MATRIZ_PRUEBAS_38.md` | P01–P38 con esperado, obtenido, evidencia, fecha y método |
-| `docs/RIESGOS_REFACTORIZACION.md` | 10 riesgos reales con commit y prueba antes/después |
+| `docs/RIESGOS_REFACTORIZACION.md` | 11 riesgos reales con commit y prueba antes/después |
 | `docs/evidencias/` | Capturas reales en Windows, logs de pruebas, salidas antes/después, script de automatización |
 
 ## 9. Empaquetado

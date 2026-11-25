@@ -1,6 +1,6 @@
 # Riesgos de diseño y refactorizaciones (Actividad 7)
 
-Este documento registra **10 riesgos reales** encontrados al construir LogiMarket 360 y al operar la aplicación en Windows.
+Este documento registra **11 riesgos reales** encontrados al construir LogiMarket 360 y al operar la aplicación en Windows.
 Ninguno es un defecto inventado: cada uno se resolvió con un commit concreto, y su efecto se comprobó con una prueba
 ejecutada **antes** (sobre el código previo) y **después** (sobre el código corregido). Las salidas literales de esas ejecuciones
 están en `docs/evidencias/refactorizacion/`.
@@ -23,6 +23,7 @@ Cómo se obtuvo cada "antes":
 | R08 | Violación de OCP: el invocador preguntaba por un tipo concreto | `if (comando is ConfirmarPedidoCommand)` introducido por R02 | `bfda083` | `R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos` | ❌ esperado 1, obtenido 0 → ✅ |
 | R09 | Lógica duplicada e inconsistente de postconfirmación del Outbox | 3 comandos repetían «si hubo éxito, despachar Outbox», cada uno con una condición distinta | `d2dfe74` | `R09_un_comando_con_eventos_solo_despacha_el_outbox_cuando_el_receptor_tuvo_exito` + `P24`, `P30`, `P35`, `P37`, `P09` | 3 llamadas → 1; suite 97/97 → 98/98 |
 | R10 | Reloj del sistema en los simuladores de Infrastructure | Referencias `V2-20261125-…` y `RMB-…` no reproducibles | `a3216ab` | `R10_las_referencias_simuladas_de_cobro_V2_y_reembolso_usan_el_reloj_de_la_aplicacion` | ❌ «V2-20261125-0001» → ✅ «V2-20260110-…» |
+| R11 | Patrón sin colaboración real y cálculo en el formulario | Visitor y Flyweight solo se usaban en pruebas; `PantallaCatalogo.PreciosDeKits` recalculaba el precio de los kits fuera del Composite | prueba `1218fd9`, `c87b517`, `5a342fe` | `P34_P21_la_pantalla_de_catalogo_obtiene_precio_por_composite_desglose_y_peso_por_visitor_y_filas_flyweight`, `P21_editar_un_producto_reemplaza_su_flyweight_y_la_vista_no_muestra_metadatos_obsoletos` | 0 consumidores en `src` → 1 consulta de Application usada por la pantalla; P21: 1 600 536 B → 560 536 B |
 
 ---
 
@@ -81,6 +82,11 @@ Cómo se obtuvo cada "antes":
 - **Antes/después:** `R10_antes.txt` («"V2-20261125-0001" differs…») y `R10_despues.txt`.
 
 ---
+
+### R11 — Patrón sin colaboración real y cálculo de precios en el formulario
+- **Detección:** revisión final de la matriz de patrones contra el código (25/11). `git grep` sobre `src` mostró que `DesgloseSkuVisitor`, `PesoLogisticoVisitor` y `CatalogoVisualFlyweightFactory` solo tenían su definición y el registro en DI: ninguna pantalla ni caso de uso los usaba, aunque la matriz citaba como evidencia el árbol del catálogo. Además, `PantallaCatalogo.PreciosDeKits` recalculaba recursivamente el precio de los kits en el formulario, duplicando el Composite (`R11_antes.txt`).
+- **Refactorización:** nueva consulta de Application `ConsultaCatalogoVisual` que construye el Composite (`ArbolCatalogo`), obtiene el precio de cada kit, recorre cada kit con los dos visitantes y arma los renglones con la fábrica Flyweight. La pantalla solo muestra el resultado (desglose, peso y precio). La fábrica reemplaza la instancia compartida cuando un producto cambia de nombre, categoría o descripción, para no mostrar datos obsoletos, y usa lambdas estáticas para no asignar un cierre por fila.
+- **Antes → después:** 0 consumidores en `src` → la pantalla Catálogo usa los tres patrones (captura `03_catalogo_arbol_kit_teletrabajo.png`). La prueba `1218fd9` se escribió antes de la corrección y no compilaba sin la consulta. P21 pasó de 1 600 536 B a 560 536 B para 10 000 filas (−88,9 % frente al escenario sin Flyweight): la versión anterior asignaba un cierre por llamada a `GetOrAdd`.
 
 ## Otros fallos detectados durante la construcción (corregidos antes de su commit)
 

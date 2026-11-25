@@ -1,0 +1,17 @@
+R11 — Visitor y Flyweight sin consumidor en el flujo real (antes de c87b517)
+Commit inspeccionado: ad52301 · 2026-11-25 00:39
+
+$ git grep -n -E 'DesgloseSkuVisitor|PesoLogisticoVisitor|CatalogoVisualFlyweightFactory' 1218fd9~1 -- src
+src/LogiMarket.Application/Catalogo/CatalogoVisualFlyweight.cs:41:public sealed class CatalogoVisualFlyweightFactory
+src/LogiMarket.Domain/Catalogo/Visitantes/DesgloseSkuVisitor.cs:9:public sealed class DesgloseSkuVisitor : IVisitanteCatalogo
+src/LogiMarket.Domain/Catalogo/Visitantes/PesoLogisticoVisitor.cs:6:public sealed class PesoLogisticoVisitor : IVisitanteCatalogo
+src/LogiMarket.Infrastructure/ContenedorLogiMarket.cs:45:        services.AddSingleton<CatalogoVisualFlyweightFactory>();
+
+Resultado: solo definiciones y el registro en DI; ninguna pantalla ni caso de uso los usa (solo las pruebas P21 y P34).
+
+$ git grep -n 'PreciosDeKits' 1218fd9~1 -- src
+src/LogiMarket.WinForms/Pantallas/PantallaCatalogo.cs:96:        var precios = PreciosDeKits();
+src/LogiMarket.WinForms/Pantallas/PantallaCatalogo.cs:108:    private Dictionary<int, decimal> PreciosDeKits()
+src/LogiMarket.WinForms/Pantallas/PantallaCatalogo.cs:148:            var precios = PreciosDeKits();
+
+Resultado: el formulario recalculaba el precio de los kits en vez de usar el Composite del dominio.
