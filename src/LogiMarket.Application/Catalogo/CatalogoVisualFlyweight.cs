@@ -54,8 +54,9 @@ public sealed class CatalogoVisualFlyweightFactory
     public MetadatosSku Obtener(string sku, string nombre, string categoria, string descripcion) =>
         _cache.AddOrUpdate(
             sku,
-            s => new MetadatosSku(s, nombre, categoria, descripcion),
-            (s, actual) => actual.Coincide(nombre, categoria, descripcion) ? actual : new MetadatosSku(s, nombre, categoria, descripcion));
+            static (s, d) => new MetadatosSku(s, d.nombre, d.categoria, d.descripcion),
+            static (s, actual, d) => actual.Coincide(d.nombre, d.categoria, d.descripcion) ? actual : new MetadatosSku(s, d.nombre, d.categoria, d.descripcion),
+            (nombre, categoria, descripcion)); // lambdas estáticas: sin asignar un cierre por fila
 
     /// <summary>Genera <paramref name="filas"/> renglones repartidos cíclicamente entre los productos dados.</summary>
     public IReadOnlyList<FilaVistaCatalogo> ConstruirVista(IReadOnlyList<Consultas.ProductoDto> productos, int filas)
