@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using FluentAssertions;
 using LogiMarket.Application.Metricas;
 using LogiMarket.Application.Seguridad;
@@ -97,6 +97,20 @@ public class PresentacionTests
         }
     }
 
+    /// <summary>
+    /// Se ejecuta en un hilo STA dedicado, sin SynchronizationContext: la espera síncrona no puede provocar interbloqueo.
+    /// </summary>
+    private static MetricasSesion ConstruirVentanaYNotificar(IServiceProvider servicios)
+    {
+        using var ambitoUi = servicios.CreateScope();
+        using var ventana = ambitoUi.ServiceProvider.GetRequiredService<FormularioPrincipal>();
+        var metricas = ambitoUi.ServiceProvider.GetRequiredService<MetricasSesion>();
+        var mediador = ambitoUi.ServiceProvider.GetRequiredService<FormularioPrincipalMediator>();
+        mediador.NotificarAsync(new ColegaFalso("PRUEBA"), EventoPantalla.CatalogoActualizado).GetAwaiter().GetResult();
+        mediador.Bitacora.Count(l => l.StartsWith("  invalidar", StringComparison.Ordinal)).Should().Be(4, "las pantallas reales están registradas en el mediador");
+        return metricas;
+    }
+
     [Fact]
     public async Task Composition_root_valida_el_grafo_y_construye_la_ventana_con_sus_11_pantallas()
     {
@@ -117,12 +131,7 @@ public class PresentacionTests
             {
                 try
                 {
-                    using var ambitoUi = servicios.CreateScope();
-                    using var ventana = ambitoUi.ServiceProvider.GetRequiredService<FormularioPrincipal>();
-                    deVentana = ambitoUi.ServiceProvider.GetRequiredService<MetricasSesion>();
-                    var mediador = ambitoUi.ServiceProvider.GetRequiredService<FormularioPrincipalMediator>();
-                    mediador.NotificarAsync(new ColegaFalso("PRUEBA"), EventoPantalla.CatalogoActualizado).GetAwaiter().GetResult();
-                    mediador.Bitacora.Count(l => l.StartsWith("  invalidar", StringComparison.Ordinal)).Should().Be(4, "las pantallas reales están registradas en el mediador");
+                    deVentana = ConstruirVentanaYNotificar(servicios);
                 }
                 catch (Exception ex)
                 {
