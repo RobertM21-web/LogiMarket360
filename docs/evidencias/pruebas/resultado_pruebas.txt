@@ -1,0 +1,127 @@
+LogiMarket 360 — ejecución de pruebas automatizadas
+Comando: dotnet test -c Release --logger "console;verbosity=detailed"
+Fecha: 2026-11-25 00:03 · SDK .NET 8.0.428 · Microsoft Windows [Version 10.0.26200.9974]
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+C:\Users\johan\Documents\Robert proyecto\tests\LogiMarket.Tests\bin\Release\net8.0-windows\LogiMarket.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 8.0.34)
+[xUnit.net 00:00:00.79]   Starting:    LogiMarket.Tests
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P21_flyweight_comparte_metadatos_entre_mil_filas_y_reduce_memoria_en_escenario_equivalente [47 ms]
+  Standard Output Messages:
+ Filas: 10000; instancias de metadatos con Flyweight: 5; sin Flyweight: 10000
+ Bytes asignados con Flyweight: 1.600.536; sin Flyweight: 5.040.256; reducción: 68,2%
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.Descuento_se_redondea_away_from_zero [48 ms]
+  Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Admin) [46 ms]
+  Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Ventas) [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.CompositeCatalogoTests.P18_kit_anidado_se_expande_hasta_los_sku_finales [54 ms]
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.P32_ana_vip_recibe_10_por_ciento_total_59 [4 ms]
+  Passed LogiMarket.Tests.Dominio.CompositeCatalogoTests.P18_precios_de_kits_se_calculan_recursivamente [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "ESTADO = PAGADO AND", fragmento: "posición 20") [53 ms]
+  Passed LogiMarket.Tests.Dominio.BorradorMementoPrototypeTests.P29_al_confirmar_el_historial_se_limpia_y_no_permite_deshacer [55 ms]
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.P32_nueva_promocion_se_agrega_sin_modificar_la_calculadora [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "PRECIO = 5", fragmento: "campo desconocido 'PRECIO'") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.FamiliasEntregaTests.P12_no_se_pueden_mezclar_productos_de_familias_distintas [53 ms]
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.P32_vip_con_volumen_mayorista_no_acumula_y_prioriza_mayorista [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "ESTADO >= PAGADO", fragmento: "solo admite el operador '='") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.P32_carmen_normal_recibe_mayorista_por_volumen_total_90 [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P13_pedido_sin_cliente_es_rechazado [56 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "TOTAL >= 50; DROP TABLE Pedidos", fragmento: "carácter no reconocido ';'") [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "(ESTADO = PAGADO", fragmento: "falta ')'") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PromocionesStrategyTests.P32_luis_normal_sin_descuento_total_102 [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "TOTAL >= abc", fragmento: "se esperaba un número") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.BorradorMementoPrototypeTests.P29_historial_conserva_como_maximo_cinco_estados [1 ms]
+  Passed LogiMarket.Tests.Dominio.CompositeCatalogoTests.P18_kit_no_puede_contenerse_a_si_mismo [1 ms]
+  Passed LogiMarket.Tests.Dominio.BorradorMementoPrototypeTests.P14_clon_de_borrador_bloqueado_vuelve_a_ser_editable [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_sintaxis_invalida_produce_error_legible(filtro: "ESTADO = PERDIDO", fragmento: "estado desconocido") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.BorradorMementoPrototypeTests.P29_tres_ediciones_dos_deshacer_un_rehacer_restauran_estados_exactos [1 ms]
+  Passed LogiMarket.Tests.Dominio.IteratorVisitorTests.P27_iterador_entrega_cada_sku_una_vez_por_unidad_y_termina [1 ms]
+  Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Bodega) [8 ms]
+  Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_sin_cliente_y_sin_stock_se_detiene_en_el_primer_eslabon_y_luego_en_stock [59 ms]
+  Passed LogiMarket.Tests.Dominio.IteratorVisitorTests.P27_iterador_propaga_cantidades_de_forma_determinista [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Consulta) [< 1 ms]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P16_adapter_legado_y_proveedor_v2_cumplen_el_mismo_contrato [9 ms]
+  Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_rol_sin_permiso_es_rechazado_en_el_ultimo_eslabon [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_parentesis_cambian_la_precedencia [3 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P26_and_tiene_mayor_precedencia_que_or [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.BorradorMementoPrototypeTests.P14_clonar_plantilla_produce_copia_profunda_independiente [2 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P25_cliente_con_comillas_y_minusculas [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.InterpreterFiltroTests.P25_estado_pagado_and_total_mayor_igual_50_devuelve_solo_los_correctos [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.IteratorVisitorTests.P34_visitante_de_peso_calcula_un_kilo_para_kit_teletrabajo [1 ms]
+  Passed LogiMarket.Tests.Dominio.FamiliasEntregaTests.P12_cada_familia_produce_tarifa_plazo_y_guia_coherentes(tipo: Expres, tarifa: 12, dias: 1, etiqueta: "ENVÍO EXPRÉS") [5 ms]
+  Passed LogiMarket.Tests.Dominio.FamiliasEntregaTests.P12_cada_familia_produce_tarifa_plazo_y_guia_coherentes(tipo: Estandar, tarifa: 5, dias: 3, etiqueta: "ENVÍO ESTÁNDAR") [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.IteratorVisitorTests.P34_visitante_de_desglose_enumera_skus_y_visita_kits_anidados [< 1 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionTests.R04_el_interprete_acepta_exactamente_los_estados_del_dominio [60 ms]
+  Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_pedido_valido_recorre_los_cuatro_eslabones [2 ms]
+  Passed LogiMarket.Tests.Aplicacion.ChainValidacionTests.P23_carrito_vacio_es_rechazado_en_lineas [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.CompositeCatalogoTests.P18_ciclo_indirecto_es_rechazado_sin_modificar_la_composicion [6 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionTests.R05_los_importes_en_auditoria_usan_punto_decimal_aunque_la_cultura_sea_es_EC [1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P31_cancelacion_permitida_desde_borrador_y_validado [8 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Infrastructure_solo_referencia_Application_y_Domain [63 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionTests.R04_los_nombres_de_estado_expuestos_coinciden_con_los_objetos_State_del_dominio [1 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Ensamblados_compilados_no_cargan_dependencias_prohibidas(marcador: typeof(LogiMarket.Domain.AssemblyMarker), prohibidas: ["LogiMarket.Application", "LogiMarket.Infrastructure", "LogiMarket.WinForms", "LogiMarket360", "Microsoft.EntityFrameworkCore", ···]) [3 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Ensamblados_compilados_no_cargan_dependencias_prohibidas(marcador: typeof(LogiMarket.Application.AssemblyMarker), prohibidas: ["LogiMarket.Infrastructure", "LogiMarket.WinForms", "LogiMarket360", "Microsoft.EntityFrameworkCore", "Microsoft.Data.Sqlite", ···]) [< 1 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Ensamblados_compilados_no_cargan_dependencias_prohibidas(marcador: typeof(LogiMarket.Infrastructure.AssemblyMarker), prohibidas: ["LogiMarket.WinForms", "LogiMarket360", "System.Windows.Forms"]) [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P24_invocador_ejecuta_y_registra_entrada_y_resultado_incluidos_errores [10 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Ningun_proyecto_interno_referencia_WinForms [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P31_ciclo_completo_valido_registra_historial_y_eventos [6 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Domain_no_referencia_ningun_proyecto_ni_paquete [1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P31_pagado_no_puede_cancelarse_ni_editarse_ni_cobrarse_otra_vez [1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P13_pedido_completo_multirrenglon_crea_agregado_valido_con_instantaneas [< 1 ms]
+  Passed LogiMarket.Tests.Arquitectura.ReglasDeDependenciaTests.Application_solo_referencia_Domain_y_no_usa_paquetes_de_infraestructura [1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P13_pedido_sin_lineas_es_rechazado [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.Instantanea_no_cambia_si_el_catalogo_cambia_despues [< 1 ms]
+  Passed LogiMarket.Tests.Dominio.PedidoBuilderStateTests.P31_estados_repetidos_y_saltos_son_rechazados [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.ObserverPublicadorTests.P30_pedido_pagado_con_tres_suscriptores_se_atiende_una_vez_por_suscriptor [81 ms]
+  Passed LogiMarket.Tests.Aplicacion.ObserverPublicadorTests.Serializador_reconstruye_el_evento_original [< 1 ms]
+  Passed LogiMarket.Tests.Aplicacion.ObserverPublicadorTests.P30_si_un_suscriptor_falla_el_reintento_no_duplica_a_los_que_ya_atendieron [< 1 ms]
+  Passed LogiMarket.Tests.Calidad.RegresionInterfazTests.R03_un_boton_primario_deshabilitado_cambia_de_aspecto_y_lo_recupera_al_habilitarse [136 ms]
+  Passed LogiMarket.Tests.Calidad.RegresionInterfazTests.R01_la_grilla_devuelve_la_fila_seleccionada_aunque_no_sea_la_fila_actual [98 ms]
+  Passed LogiMarket.Tests.Presentacion.PresentacionTests.Composition_root_valida_el_grafo_y_construye_la_ventana_con_sus_11_pantallas [1 s]
+  Passed LogiMarket.Tests.Presentacion.PresentacionTests.P28_ninguna_pantalla_referencia_a_otra_pantalla [3 ms]
+  Passed LogiMarket.Tests.Presentacion.PresentacionTests.P28_al_validar_el_mediador_entrega_el_pedido_a_cobro_y_navega_sin_que_el_carrito_conozca_al_cobro [2 ms]
+  Passed LogiMarket.Tests.Presentacion.PresentacionTests.P28_al_confirmar_el_mediador_refresca_catalogo_pedidos_inventario_y_panel_sin_tocar_clientes [1 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P05_kit_teletrabajo_por_6_se_rechaza_por_p02_sin_efectos [1 s]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad [1 s]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P04_carmen_mayorista_por_volumen_total_90 [289 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R09_un_comando_con_eventos_solo_despacha_el_outbox_cuando_el_receptor_tuvo_exito [1 s]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos [< 1 ms]
+  Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P35_devolucion_de_ana_por_defecto_reembolsa_54_sin_flete_una_sola_vez [1 s]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P19_decorator_registra_inicio_pasarela_y_fin_con_la_misma_correlacion [322 ms]
+  Standard Output Messages:
+ COR-49c9fcc73b1d COBRO INICIO           INICIO           USD 59.00 clave ba023ba8c8ee44338559c23918384e9f
+ COR-49c9fcc73b1d PASARELA LEGACY        APROBADO         CobrarCentavos(5900) → 00|LEG-000001
+ COR-49c9fcc73b1d COBRO FIN              COBRO APROBADO   LEGACY ref. LEG-000001
+ COR-1136d8a97d02 COBRO INICIO           INICIO           USD 10.00 clave 4d391ae87849418aa77f95a16ab04d73
+ COR-1136d8a97d02 COBRO FIN              COBRO RECHAZADO  LEGACY: RECHAZO INDUCIDO (modo demostración)
+ PED-002 COBRO RECHAZADO        RECHAZADO        PED-002: RECHAZO INDUCIDO (modo demostración)
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P08_pedido_pagado_no_se_cancela_ni_se_modifica_y_conserva_su_precio [310 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R10_las_referencias_simuladas_de_cobro_V2_y_reembolso_usan_el_reloj_de_la_aplicacion [321 ms]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P20_facade_con_falla_en_un_colaborador_no_deja_persistencia_parcial_y_compensa_el_cobro [280 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P05b_stock_consumido_entre_validacion_y_confirmacion_se_rechaza_sin_cobro [357 ms]
+  Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P33_template_method_defecto_dia_20_aceptado_y_arrepentimiento_dia_10_rechazado [551 ms]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P15_singleton_metricas_es_la_misma_instancia_en_distintos_ambitos_y_es_thread_safe [276 ms]
+  Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R07_la_alerta_de_devoluciones_por_revisar_usa_el_reloj_de_la_aplicacion [354 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P01_bd_desde_archivo_inexistente_migra_siembra_y_no_duplica_al_relanzar [198 ms]
+  Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P36_dos_cobros_concurrentes_sobre_stock_1_aprueban_como_maximo_uno [280 ms]
+  Standard Output Messages:
+ PED-001: CONFLICTO_CONCURRENCIA — No se confirmó el pedido PED-001: Otro usuario modificó los mismos datos (stock). Intente nuevamente.
+ PED-002: CONFIRMADO — Pedido PED-002 pagado. Referencia LEG-000001.
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P17_bridge_cuatro_combinaciones_con_txt_real_y_vista_previa_visible [344 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P02_ana_vip_kit_teletrabajo_estandar_total_59_y_stock_7_4_19 [250 ms]
+  Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P33_arrepentimiento_exige_producto_sin_uso [299 ms]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P11_factory_method_elige_email_o_sms_segun_el_cliente_y_registra_el_aviso [363 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P09_bodega_despacha_y_entrega_en_secuencia_y_no_despacha_sin_pago [336 ms]
+  Passed LogiMarket.Tests.Integracion.IntegridadRecuperacionTests.P37_falla_del_notificador_deja_el_evento_pendiente_y_se_recupera_una_sola_vez [322 ms]
+  Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P38_dip_la_facade_depende_solo_de_abstracciones_de_aplicacion [240 ms]
+  Standard Output Messages:
+ Validación + confirmación + Outbox: 93 ms
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P06_error_de_cobro_simulado_deja_todo_intacto_sin_outbox_de_exito [196 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P03_luis_normal_expres_total_102 [203 ms]
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P10_cerrar_y_reabrir_conserva_pedido_stock_pago_y_auditoria [218 ms]
+[xUnit.net 00:00:04.82]   Finished:    LogiMarket.Tests
+  Passed LogiMarket.Tests.Integracion.FuncionalidadReglasTests.P07_repetir_confirmacion_con_la_misma_clave_devuelve_el_resultado_original_sin_cobro_doble [173 ms]
+Test Run Successful.
+Total tests: 98
+     Passed: 98
+ Total time: 5,5036 Seconds

@@ -1,0 +1,5 @@
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Admin) [8 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_ventas_y_admin_son_autorizados(rol: Ventas) [< 1 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Bodega) [7 ms]
+Passed LogiMarket.Tests.Aplicacion.CommandProxyTests.P22_roles_sin_permiso_no_alcanzan_la_pasarela(rol: Consulta) [< 1 ms]
+Passed LogiMarket.Tests.Integracion.PatronesIntegracionTests.P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad [1 s]

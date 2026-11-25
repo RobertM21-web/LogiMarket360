@@ -1,0 +1,28 @@
+R04 — literales de estado fuera del dominio (src/Application + src/WinForms)
+ANTES (commit cb191a0):
+src/LogiMarket.Application/Consultas/ConsultasOperativas.cs:23:    private static readonly string[] EstadosActivos = ["BORRADOR", "VALIDADO", "PAGADO", "DESPACHADO"];
+src/LogiMarket.Application/Consultas/ConsultasOperativas.cs:102:        var porRevisar = pedidos.Count(p => p.Estado == "ENTREGADO" && !p.Devuelto && p.FechaEntregaUtc >= DateTime.UtcNow.AddDays(-30));
+src/LogiMarket.Application/Consultas/ConsultasOperativas.cs:126:            pedidos.Count(p => p.Estado == "PAGADO"),
+src/LogiMarket.Application/Consultas/Filtro/InterpreteFiltro.cs:189:    private static readonly string[] Estados = ["BORRADOR", "VALIDADO", "PAGADO", "DESPACHADO", "ENTREGADO", "CANCELADO"];
+src/LogiMarket.Application/Pedidos/ServicioPedidos.cs:147:        return new ResultadoValidacionPedido(true, "VALIDADO", $"Pedido {pedido.Codigo} validado. Total {pedido.Total}.", pedido.Id, pedido.Codigo, validacion.Recorrido);
+src/LogiMarket.WinForms/Comun/Tema.cs:142:        "BORRADOR" => Color.FromArgb(100, 116, 139),
+src/LogiMarket.WinForms/Comun/Tema.cs:143:        "VALIDADO" => Color.FromArgb(2, 132, 199),
+src/LogiMarket.WinForms/Comun/Tema.cs:144:        "PAGADO" => Exito,
+src/LogiMarket.WinForms/Comun/Tema.cs:145:        "DESPACHADO" => Color.FromArgb(124, 58, 237),
+src/LogiMarket.WinForms/Comun/Tema.cs:146:        "ENTREGADO" => Color.FromArgb(15, 118, 110),
+src/LogiMarket.WinForms/Comun/Tema.cs:147:        "CANCELADO" => Peligro,
+src/LogiMarket.WinForms/Pantallas/PantallaCobro.cs:124:        var visibles = pedidos!.Where(p => p.Estado == "VALIDADO" || _incluirPagados.Checked || p.Id == anterior);
+src/LogiMarket.WinForms/Pantallas/PantallaDespacho.cs:63:            _grilla.Mostrar(pedidos!.OrderBy(p => p.Estado == "PAGADO" ? 0 : p.Estado == "DESPACHADO" ? 1 : 2).ThenBy(p => p.Id));
+src/LogiMarket.WinForms/Pantallas/PantallaDespacho.cs:71:        _despachar.Enabled = p?.Estado == "PAGADO" && Puede(Operacion.DespacharPedido);
+src/LogiMarket.WinForms/Pantallas/PantallaDespacho.cs:72:        _entregar.Enabled = p?.Estado == "DESPACHADO" && Puede(Operacion.EntregarPedido);
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:14:    private static readonly string[] Flujo = ["BORRADOR", "VALIDADO", "PAGADO", "DESPACHADO", "ENTREGADO"];
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:66:        foreach (var estado in Flujo.Append("CANCELADO"))
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:169:        if (p.Estado == "CANCELADO")
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:171:            _linea.Controls.Add(Tema.Chip("CANCELADO", Tema.Peligro));
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:184:        _cancelar.Enabled = Puede(Operacion.CancelarPedido) && p.Estado is "BORRADOR" or "VALIDADO";
+src/LogiMarket.WinForms/Pantallas/PantallaPedidos.cs:185:        _cobrar.Enabled = p.Estado == "VALIDADO" && Puede(Operacion.CobrarPedido);
+Total antes: 21
+
+DESPUÉS:
+(sin coincidencias)
+Total después: 0

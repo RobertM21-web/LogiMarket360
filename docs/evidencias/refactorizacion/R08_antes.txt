@@ -1,0 +1,2 @@
+Failed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R08_cada_comando_decide_que_metrica_afecta_su_denegacion_sin_que_el_invocador_conozca_tipos_concretos [22 ms]
+Expected metricas.Instantanea.CobrosDenegados to be 1 because solo el comando de cobro cuenta como cobro denegado, but found 0 (difference of -1).

@@ -1,0 +1,1 @@
+Passed LogiMarket.Tests.Calidad.RefactorizacionIntegracionTests.R07_la_alerta_de_devoluciones_por_revisar_usa_el_reloj_de_la_aplicacion [1 s]
