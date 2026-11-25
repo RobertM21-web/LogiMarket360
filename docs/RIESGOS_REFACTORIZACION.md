@@ -99,7 +99,7 @@ Se registran por trazabilidad. No tienen un "antes" en Git porque se corrigieron
 
 | Antipatrón | Verificación | Estado |
 |---|---|---|
-| SQL o EF en Domain/Application | `ReglasDeDependenciaTests` (6 pruebas): Domain sin referencias; Application solo Domain | Ausente |
+| SQL o EF en Domain/Application | `ReglasDeDependenciaTests` (7 pruebas): Domain sin referencias; Application solo Domain | Ausente |
 | Formularios que se llaman entre sí | `P28_ninguna_pantalla_referencia_a_otra_pantalla` (reflexión) | Ausente |
 | Cálculo de tarifas en formularios | Tarifas solo en `FamiliasEntrega` (Abstract Factory) | Ausente |
 | Clase Dios | Archivo más grande de producción: `InterpreteFiltro.cs` (316 líneas, léxico + parser + AST); Facade de 159 líneas que solo coordina | Controlado |
