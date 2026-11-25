@@ -1,7 +1,7 @@
 # Matriz de 38 pruebas (P01–P38) — resultados obtenidos
 
-- **Automatizadas:** `dotnet test -c Release` → **98 aprobadas / 98 ejecutadas, 0 fallidas, 0 omitidas** (log completo en
-  `docs/evidencias/pruebas/resultado_pruebas.txt`, ejecución del 25/11/2026 00:03, SDK .NET 8.0.428, Windows 11 26200).
+- **Automatizadas:** `dotnet test -c Release` → **100 aprobadas / 100 ejecutadas, 0 fallidas, 0 omitidas** (log completo en
+  `docs/evidencias/pruebas/resultado_pruebas.txt`, ejecución del 25/11/2026 00:40, SDK .NET 8.0.428, Windows 11 26200).
 - **Manuales en la interfaz real:** sesión automatizada con UI Automation sobre `LogiMarket360.exe` (Release) el
   24/11/2026 entre 23:44 y 23:53, base de datos nueva en carpeta aislada (`--datos`). Capturas en `docs/evidencias/capturas/`;
   script reproducible en `docs/evidencias/automatizacion_ui.ps1`.
@@ -44,7 +44,7 @@
 | P18 | Precios de kits; expansión; ciclo directo e indirecto | KIT_OFICINA=50, KIT_TELETRABAJO=60; SKU finales; ciclo rechazado | 50.00 / 60.00; P01, P02, P03; `KIT_CICLICO` sin modificar la composición | `03_catalogo_*.png` | 24/11 · 25/11 | D `P18_*` (4) | ✅ |
 | P19 | Cobro aprobado y cobro rechazado | INICIO → PASARELA → FIN/ERROR con la misma correlación | `COR-49c9…`: COBRO INICIO → PASARELA LEGACY → COBRO FIN; rechazo con su propio `COR-` | `resultado_pruebas.txt`, `12_auditoria_pagos_P19.png` | 24/11 · 25/11 | PI `P19_decorator_registra_inicio_pasarela_y_fin_con_la_misma_correlacion` | ✅ |
 | P20 | Falla de un colaborador tras el cobro | Sin persistencia parcial; cobro compensado | Pedido sigue VALIDADO; reverso del cobro registrado; sin stock ni Outbox | — | 25/11/2026 | PI `P20_facade_con_falla_en_un_colaborador_no_deja_persistencia_parcial_y_compensa_el_cobro` | ✅ |
-| P21 | 10 000 renglones de vista (requisito ≥ 1 000) | Metadatos compartidos; comparación en condiciones equivalentes | 5 instancias frente a 10 000; 1 600 536 B frente a 5 040 256 B (−68,2 %) | `resultado_pruebas.txt` | 25/11/2026 | PI `P21_flyweight_comparte_metadatos_entre_mil_filas_y_reduce_memoria_en_escenario_equivalente` | ✅ |
+| P21 | 10 000 renglones de vista (requisito ≥ 1 000); catálogo real en la interfaz | Metadatos compartidos; comparación en condiciones equivalentes; sin metadatos obsoletos tras editar | 5 instancias frente a 10 000; 560 536 B frente a 5 040 256 B (−88,9 %); la grilla del catálogo reutiliza la misma instancia entre recargas; un producto renombrado se muestra con su nombre nuevo | `resultado_pruebas.txt`, `R11_despues.txt` | 25/11/2026 | PI `P21_flyweight_comparte_metadatos_entre_mil_filas_y_reduce_memoria_en_escenario_equivalente`, `P21_editar_un_producto_reemplaza_su_flyweight_y_la_vista_no_muestra_metadatos_obsoletos`, `P34_P21_la_pantalla_de_catalogo_*` | ✅ |
 | P22 | CONSULTA y BODEGA intentan cobrar | Denegado sin invocar pasarela ni LOG de cobro; VENTAS/ADMIN autorizados | `ACCESO_DENEGADO`; 0 llamadas a la pasarela; auditoría SEGURIDAD; métrica «cobros denegados» = 1 | `07_cobro_P22_consulta_denegado.png` | 24/11 · 25/11 | A `P22_*` (4); PI `P22_rol_consulta_*` | ✅ |
 
 ## D. Comportamentales
@@ -62,7 +62,7 @@
 | P31 | Ciclo completo; PAGADO→CANCELADO; estado repetido | Ciclo válido; rechazos | Historial completo; `TRANSICION_INVALIDA` | `06_pedidos_historial_PED001.png` | 24/11 · 25/11 | D `P31_*` (4) | ✅ |
 | P32 | Ana, Carmen, Luis; política nueva | 6.00 / 15.00 / 0.00; no acumula; promoción nueva sin tocar la calculadora | Valores exactos; prioridad explícita | `05_carrito_P0x_*.png` | 24/11 · 25/11 | D `P32_*` (5) | ✅ |
 | P33 | DEFECTO día 20; ARREPENTIMIENTO día 10; producto usado | Defecto aceptado; arrepentimiento rechazado sin reembolso ni stock | `FUERA_DE_PLAZO` y `PRODUCTO_USADO`; defecto con 5 pasos | `09_devolucion_P33_arrepentimiento_usado_rechazado.png` | 24/11 · 25/11 | IR `P33_*` (2) | ✅ |
-| P34 | Visitar KIT_TELETRABAJO | Desglose P01/P02/P03; peso 1,00 kg | Desglose por nivel; 1,00 kg | `03_catalogo_arbol_kit_teletrabajo.png` | 25/11/2026 | D `P34_*` (2) | ✅ |
+| P34 | Visitar KIT_TELETRABAJO | Desglose P01/P02/P03; peso 1,00 kg | Desglose P01 ×1, P02 ×1, P03 ×1; kits visitados KIT_TELETRABAJO → KIT_OFICINA; 1,00 kg; mostrado en la pantalla Catálogo | `03_catalogo_arbol_kit_teletrabajo.png` | 25/11/2026 | D `P34_*` (2); PI `P34_P21_la_pantalla_de_catalogo_obtiene_precio_por_composite_desglose_y_peso_por_visitor_y_filas_flyweight` | ✅ |
 
 ## E. Integridad, recuperación y arquitectura
 
@@ -71,7 +71,7 @@
 | P35 | PED-001 de Ana ENTREGADO, devolución por DEFECTO; repetir | **USD 54.00** sin flete; un reintegro; devolución única | «Devolución DEV-001 aceptada. Reembolso USD 54.00 (sin envío).» Segundo intento rechazado; stock reintegrado una sola vez | `09_devolucion_P35_*.png`, TXT DEV-001 | 24/11 · 25/11 | IR `P35_devolucion_de_ana_por_defecto_reembolsa_54_sin_flete_una_sola_vez` | ✅ |
 | P36 | Dos cobros concurrentes sobre SKU con stock = 1 | Como máximo un cobro aprobado; stock nunca negativo | PED-002 confirmado; PED-001 `CONFLICTO_CONCURRENCIA` (concurrencia optimista) con reverso del cobro | `resultado_pruebas.txt` | 25/11/2026 | IR `P36_dos_cobros_concurrentes_sobre_stock_1_aprueban_como_maximo_uno` | ✅ |
 | P37 | Notificador caído; luego reprocesar | Evento PENDIENTE; al reprocesar se procesa una vez; sin cobro duplicado | Outbox 7 PENDIENTE (error NOTIFICACION) → «1 procesados, 0 pendientes»; 1 pago | `12_outbox_P37_pendiente.png`, `12_outbox_P37_procesado.png` | 24/11 · 25/11 | IR `P37_falla_del_notificador_deja_el_evento_pendiente_y_se_recupera_una_sola_vez` | ✅ |
-| P38 | Reglas de dependencia, DIP, compilación limpia y ≥ 25 pruebas | Referencias prohibidas ausentes; build desde cero; ≥ 25 aprobadas | 7 pruebas de arquitectura aprobadas; la Facade solo depende de abstracciones; build desde el ZIP limpio sin errores; **98/98** aprobadas | `fase0_arquitectura_referencia_prohibida.log`, `pruebas/build_limpio.txt` | 25/11/2026 | AR (7); PI `P38_dip_la_facade_depende_solo_de_abstracciones_de_aplicacion` | ✅ |
+| P38 | Reglas de dependencia, DIP, compilación limpia y ≥ 25 pruebas | Referencias prohibidas ausentes; build desde cero; ≥ 25 aprobadas | 7 pruebas de arquitectura aprobadas; la Facade solo depende de abstracciones; build desde el ZIP limpio sin errores; **100/100** aprobadas | `fase0_arquitectura_referencia_prohibida.log`, `pruebas/build_limpio.txt` | 25/11/2026 | AR (7); PI `P38_dip_la_facade_depende_solo_de_abstracciones_de_aplicacion` | ✅ |
 
 ## Resumen
 
@@ -83,4 +83,4 @@
 | D. Comportamentales | P23–P34 | 12/12 |
 | E. Integridad / recuperación / arquitectura | P35–P38 | 4/4 |
 | **Total matriz** | **38** | **38/38** |
-| Pruebas automatizadas (xUnit) | 98 | **98/98** (incluye 10 guardas de refactorización R01–R10) |
+| Pruebas automatizadas (xUnit) | 100 | **100/100** (incluye 9 guardas de refactorización; R02 se verifica en P22 y R11 en P21/P34) |

@@ -20,6 +20,7 @@ public sealed class PantallaCatalogo : PantallaBase
     private readonly GrillaDatos _grilla = new() { AccessibleName = "Catálogo" };
     private readonly TreeView _arbol = new() { Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, AccessibleName = "Estructura del kit", Font = Tema.Base };
     private readonly Label _resumenKit = new() { AutoSize = true, ForeColor = Tema.TextoSuave, Dock = DockStyle.Bottom };
+    private readonly Label _desglose = new() { AutoSize = true, Dock = DockStyle.Bottom, Padding = new Padding(0, 4, 0, 4), AccessibleName = "Desglose físico del kit" };
     private readonly Button _nuevoProducto;
     private readonly Button _nuevoKit;
     private readonly Button _editar;
@@ -27,6 +28,7 @@ public sealed class PantallaCatalogo : PantallaBase
     private readonly Button _composicion;
     private List<ProductoDto> _productos = [];
     private List<KitDto> _kits = [];
+    private VistaCatalogo? _vista;
 
     public PantallaCatalogo(EjecutorOperaciones ejecutor, IMediadorPantallas mediador)
         : base(ClavesPantalla.Catalogo, "Catálogo y kits", "Productos simples y kits compuestos (un kit puede contener productos y otros kits).", ejecutor, mediador)
@@ -57,6 +59,7 @@ public sealed class PantallaCatalogo : PantallaBase
 
         var estructura = new Panel { Dock = DockStyle.Fill };
         estructura.Controls.Add(_arbol);
+        estructura.Controls.Add(_desglose);
         estructura.Controls.Add(_resumenKit);
         estructura.Controls.Add(Tema.Fila(_composicion));
 
@@ -65,7 +68,11 @@ public sealed class PantallaCatalogo : PantallaBase
         division.Panel2.Controls.Add(Tema.Tarjeta("Estructura del kit", estructura));
         Contenido.Controls.Add(division);
         Contenido.Controls.Add(Tema.Fila(Tema.Etiqueta("&Buscar:"), _buscar, _nuevoProducto, _nuevoKit, _editar, _activar));
-        Resize += (_, _) => division.SplitterDistance = Math.Max(200, (int)(division.Width * 0.66));
+        Resize += (_, _) =>
+        {
+            division.SplitterDistance = Math.Max(200, (int)(division.Width * 0.66));
+            _desglose.MaximumSize = _resumenKit.MaximumSize = new Size(Math.Max(120, division.Panel2.Width - 40), 0);
+        };
     }
 
     protected override void AplicarPermisos()
@@ -79,59 +86,28 @@ public sealed class PantallaCatalogo : PantallaBase
         var (ok, datos) = await Ejecutor.IntentarAsync(this, async sp =>
         {
             var c = sp.GetRequiredService<ConsultasOperativas>();
-            return (await c.ProductosAsync(), await c.KitsAsync());
+            return (await c.ProductosAsync(), await c.KitsAsync(), await sp.GetRequiredService<ConsultaCatalogoVisual>().CargarAsync());
         });
         if (!ok)
         {
             return;
         }
 
-        (_productos, _kits) = (datos.Item1.ToList(), datos.Item2.ToList());
+        (_productos, _kits, _vista) = (datos.Item1.ToList(), datos.Item2.ToList(), datos.Item3);
         Filtrar();
     }
 
     private void Filtrar()
     {
         var texto = _buscar.Text.Trim();
-        var precios = PreciosDeKits();
-        var filas = _productos.Select(p => new FilaCatalogo("PRODUCTO", p.Id, p.Sku, p.Nombre, p.Categoria, p.Precio, p.Stock.ToString(Tema.Cultura), p.Activo ? "Activo" : "Inactivo"))
-            .Concat(_kits.Select(k => new FilaCatalogo("KIT", k.Id, k.Codigo, k.Nombre, "Kit", precios.GetValueOrDefault(k.Id), "—", k.Activo ? "Activo" : "Inactivo")))
+        var filas = (_vista?.Filas ?? [])
+            .Select(f => new FilaCatalogo(f.Tipo, f.Id, f.Codigo, f.Nombre, f.Categoria, f.Precio, f.Stock?.ToString(Tema.Cultura) ?? "—", f.Activo ? "Activo" : "Inactivo"))
             .Where(f => texto.Length == 0
                 || f.Codigo.Contains(texto, StringComparison.OrdinalIgnoreCase)
                 || f.Nombre.Contains(texto, StringComparison.OrdinalIgnoreCase)
                 || f.Categoria.Contains(texto, StringComparison.OrdinalIgnoreCase));
         _grilla.Mostrar(filas);
         MostrarEstructura();
-    }
-
-    /// <summary>Precio derivado de cada kit (suma recursiva de sus componentes) para mostrar en la grilla.</summary>
-    private Dictionary<int, decimal> PreciosDeKits()
-    {
-        var memo = new Dictionary<int, decimal>();
-        decimal Precio(KitDto k, int profundidad)
-        {
-            if (memo.TryGetValue(k.Id, out var p))
-            {
-                return p;
-            }
-
-            if (profundidad > 20)
-            {
-                return 0;
-            }
-
-            p = k.Componentes.Sum(c => c.Cantidad * (c.ProductoId is int pid
-                ? _productos.FirstOrDefault(x => x.Id == pid)?.Precio ?? 0
-                : _kits.FirstOrDefault(x => x.Id == c.KitHijoId) is { } hijo ? Precio(hijo, profundidad + 1) : 0));
-            return memo[k.Id] = p;
-        }
-
-        foreach (var k in _kits)
-        {
-            Precio(k, 0);
-        }
-
-        return memo;
     }
 
     private void MostrarEstructura()
@@ -145,16 +121,30 @@ public sealed class PantallaCatalogo : PantallaBase
             var raiz = _arbol.Nodes.Add($"{kit.Codigo} — {kit.Nombre}");
             Agregar(raiz.Nodes, kit, 0);
             _arbol.ExpandAll();
-            var precios = PreciosDeKits();
-            _resumenKit.Text = $"Precio derivado: {Tema.Usd(precios.GetValueOrDefault(kit.Id))} (suma de componentes; sin stock propio)";
+            MostrarResumenKit(kit.Codigo);
         }
         else if (fila is not null)
         {
             _arbol.Nodes.Add($"{fila.Codigo} — {fila.Nombre} (producto simple)");
             _resumenKit.Text = "Seleccione un kit para ver su estructura.";
+            _desglose.Text = string.Empty;
         }
 
         _arbol.EndUpdate();
+    }
+
+    /// <summary>Muestra lo que calculó Application: precio (Composite), desglose y peso (Visitor).</summary>
+    private void MostrarResumenKit(string codigo)
+    {
+        if (_vista?.Kits.GetValueOrDefault(codigo) is not { } e)
+        {
+            _resumenKit.Text = _desglose.Text = string.Empty;
+            return;
+        }
+
+        var lineas = string.Join(", ", e.Desglose.Select(l => $"{l.Sku} ×{l.Cantidad}"));
+        _desglose.Text = $"Desglose por SKU final: {lineas}{Environment.NewLine}Peso logístico: {e.PesoKg.ToString("0.00", Tema.Cultura)} kg · kits visitados: {string.Join(" → ", e.KitsVisitados)}";
+        _resumenKit.Text = $"Precio derivado: {Tema.Usd(e.Precio)} (suma recursiva de componentes; sin stock propio)";
     }
 
     private void Agregar(TreeNodeCollection nodos, KitDto kit, int profundidad)
