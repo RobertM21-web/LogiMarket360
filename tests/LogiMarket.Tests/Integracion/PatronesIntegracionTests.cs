@@ -190,6 +190,46 @@ public class PatronesIntegracionTests(ITestOutputHelper salida)
     }
 
     [Fact]
+    public async Task P34_P21_la_pantalla_de_catalogo_obtiene_precio_por_composite_desglose_y_peso_por_visitor_y_filas_flyweight()
+    {
+        await using var e = await EntornoIntegracion.CrearAsync();
+        e.IniciarSesion(Rol.Consulta);
+
+        var vista = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ConsultaCatalogoVisual>().CargarAsync());
+
+        var teletrabajo = vista.Kits["KIT_TELETRABAJO"];
+        teletrabajo.Precio.Should().Be(60.00m, "Composite: 50 de KIT_OFICINA + 10 de P03");
+        teletrabajo.PesoKg.Should().Be(1.00m, "Visitor de peso logístico");
+        teletrabajo.Desglose.Select(l => (l.Sku, l.Cantidad)).Should().Equal(("P01", 1), ("P02", 1), ("P03", 1));
+        teletrabajo.KitsVisitados.Should().Equal("KIT_TELETRABAJO", "KIT_OFICINA");
+        vista.Kits["KIT_OFICINA"].Precio.Should().Be(50.00m);
+        vista.Filas.Should().HaveCount(7).And.Contain(f => f.Codigo == "KIT_TELETRABAJO" && f.Precio == 60.00m && f.Stock == null);
+
+        var segunda = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ConsultaCatalogoVisual>().CargarAsync());
+        ReferenceEquals(vista.Filas.Single(f => f.Codigo == "P01").Metadatos, segunda.Filas.Single(f => f.Codigo == "P01").Metadatos)
+            .Should().BeTrue("la fábrica Flyweight es Singleton y comparte los metadatos entre recargas y ámbitos");
+        segunda.MetadatosCompartidos.Should().Be(7);
+    }
+
+    [Fact]
+    public async Task P21_editar_un_producto_reemplaza_su_flyweight_y_la_vista_no_muestra_metadatos_obsoletos()
+    {
+        await using var e = await EntornoIntegracion.CrearAsync();
+        e.IniciarSesion(Rol.Admin);
+        var antes = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ConsultaCatalogoVisual>().CargarAsync());
+        var p01 = antes.Filas.Single(f => f.Codigo == "P01");
+        var otro = antes.Filas.Single(f => f.Codigo == "P02").Metadatos;
+
+        var r = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ServicioCatalogo>()
+            .ActualizarProductoAsync(p01.Id, new DatosProducto("P01", "Mouse inalámbrico renombrado", p01.Categoria, p01.Metadatos.Descripcion, p01.Precio, 0.20m, 0)));
+        r.Exito.Should().BeTrue(r.Mensaje);
+        var despues = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ConsultaCatalogoVisual>().CargarAsync());
+
+        despues.Filas.Single(f => f.Codigo == "P01").Nombre.Should().Be("Mouse inalámbrico renombrado");
+        ReferenceEquals(despues.Filas.Single(f => f.Codigo == "P02").Metadatos, otro).Should().BeTrue("los SKU sin cambios siguen compartidos");
+    }
+
+    [Fact]
     public async Task P22_rol_consulta_no_alcanza_decorator_ni_adapter_y_queda_auditoria_de_seguridad()
     {
         await using var e = await EntornoIntegracion.CrearAsync();
