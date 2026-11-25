@@ -20,6 +20,9 @@ public sealed class MetadatosSku
     public string Categoria { get; }
 
     public string Descripcion { get; }
+
+    internal bool Coincide(string nombre, string categoria, string descripcion) =>
+        Nombre == nombre && Categoria == categoria && Descripcion == descripcion;
 }
 
 /// <summary>Renglón de vista: referencia al flyweight + estado extrínseco propio de la fila.</summary>
@@ -44,8 +47,15 @@ public sealed class CatalogoVisualFlyweightFactory
 
     public int InstanciasCreadas => _cache.Count;
 
+    /// <summary>
+    /// Devuelve la instancia compartida del SKU. Si el producto se editó (nombre, categoría o descripción
+    /// distintos), la sustituye para que la vista nunca muestre metadatos obsoletos.
+    /// </summary>
     public MetadatosSku Obtener(string sku, string nombre, string categoria, string descripcion) =>
-        _cache.GetOrAdd(sku, s => new MetadatosSku(s, nombre, categoria, descripcion));
+        _cache.AddOrUpdate(
+            sku,
+            s => new MetadatosSku(s, nombre, categoria, descripcion),
+            (s, actual) => actual.Coincide(nombre, categoria, descripcion) ? actual : new MetadatosSku(s, nombre, categoria, descripcion));
 
     /// <summary>Genera <paramref name="filas"/> renglones repartidos cíclicamente entre los productos dados.</summary>
     public IReadOnlyList<FilaVistaCatalogo> ConstruirVista(IReadOnlyList<Consultas.ProductoDto> productos, int filas)
